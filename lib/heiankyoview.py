@@ -44,6 +44,46 @@ class Table:
 		self.matrix[i][j] = value
 	def get(self, i, j):
 		return self.matrix[i][j]
+	def doubleN(self):
+		pass
+	def doubleM(self):
+		pass
+
+class BoolT:
+	def __self__(self, N, M):
+		self.n = N
+		self.m = M
+		self.matrix = Table(N, M, False)
+	def expandN(startI, addI):
+		ensureN(addI)
+		self.n += addI
+		mvN(startI, addI)
+	def mvN(startI, addI):
+		pass
+	def expandM(startJ, addJ):
+		pass
+	def mvM(startJ, addJ):
+		pass
+
+class BoolTable:
+	def __self__(self, N, M):
+		self.boolT = BoolT(N+2, M+2)
+	def adjustI(i):
+		return i + 1
+	def adjustJ(j):
+		return j + 1
+	def get(i, j):
+		pass
+	def set(i, j, b):
+		pass
+	def n():
+		return self.boolT.n - 2
+	def m():
+		pass
+	def expandN(startI, addI):
+		self.boolT.expandN(adjustI(startI), addI)
+	def expandM(startJ, addJ):
+		pass
 
 class Coordinate:
 	def __init__(self, minLine, maxLine):
@@ -59,12 +99,20 @@ class Coordinate:
 
 class PackingGrid:
 	def __init__(self):
-		pass
+		self.xCoord = Coordinate()
+		self.yCoord = Coordinate()
+		self.boolT = BoolTable()
 	
+class LightPackingGrid:
+	def __init__(self):
+		self.grid = PackingGrid()
+		self.candidates = []
 
 class RectanglePacking:
 	def __init__(self):
+		self.lgrid = LightPackingGrid()
 		pass
+
 	def add(self, rect):
 		pass
 
