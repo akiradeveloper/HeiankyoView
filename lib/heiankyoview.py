@@ -98,20 +98,85 @@ class Coordinate:
 		return self.L[self.L.size() - 1]
 
 class PackingGrid:
+
 	def __init__(self):
 		self.xCoord = Coordinate()
 		self.yCoord = Coordinate()
 		self.boolT = BoolTable()
-	
-class LightPackingGrid:
-	def __init__(self):
-		self.grid = PackingGrid()
 		self.candidates = []
+
+	def updateBoolT(self, iGridMin, iGridMax, jGridMin, jGridMax):
+		for i in xrange(iGridMin, iGridMax + 1):
+			for j in xrange(jGridMin, jGridMax + 1):
+				self.boolT.set(i, j, True)
+
+	def getGridIndex(self, i, j, position):
+		m = { 
+			CornerPosition.RIGHT_UP   : (i, j),	
+			CornerPosition.RIGHT_DOWN : (i, j - 1),
+			CornerPosition.LEFT_UP    : (i - 1, j),
+			CornerPosition.LEFT_DOWN  : (i - 1, j - 1),
+		}
+		return m[position]
+
+	def getCornerType(self, i, j, checkCorner, adjacentCorner):
+		ic, jc = self.getGridIndex(i, j, checkCorner)
+		ia, ja = self.getGridIndex(i, j, adjacentCorner)
+
+		if self.isOccupied(ic, jc):
+			cornerType = CornerType.OCCUPIED
+		else:
+			if self.isOccupied(ia, ja):
+				cornerType = CornerType.ADJACENT
+			else:
+				cornerType = CornerType.FREE
+
+		return cornerType
+
+	def plac(self, i, j, position, newXLine, newYLine):
+		def addNewXLine(newXLine):
+			pass
+		def addNewYLine(newYLine):
+			pass
+
+		bx = not newXLine in self.xCoord
+		if bx:
+			addNewXLine(newXLine)	
+		by = not newYLine in self.xCoord
+		if by:
+			addNewYLine(newYLine)		
+
+		newXLineIndex = self.xCoord.indexOf(newXLine)
+		newYLineIndex = self.yCoord.indexOf(newYLine)
+
+		addI = 1 if bx else 0
+		addJ = 1 if by else 0
+
+		self.collectCandidate(iLeft, iRight, jBottom, jTop, position)
+		self.updateBoolT(iLeft, iRight - 1, jBottom, jTop - 1)
+	
+	def place(self, i, j, position, w, h):
+		x = self.xCoord[i]
+		y = self.yCoord[j]
+
+		if position == CornerPosition.RIGHT_UP:
+			self.plac(i, j, position, x + w, y + h)
+		if position == CornerPosition.RIGHT_DOWN:
+			self.plac(i, j, position, x + w, y - h)
+		if position == CornerPosition.LEFT_UP:
+			self.plac(i, j, position, x - w, y + h)
+		if position == CornerPosition.LEFT_DOWN:		
+			self.plac(i, j, position, x - w, y - h)
 
 class RectanglePacking:
 	def __init__(self):
-		self.lgrid = LightPackingGrid()
+		self.grid = PackingGrid()
 		pass
+
+	def evaluatePlacement(w, h):
+		aspectRatio = max( w/h, h/w )
+		size = w * h
+		return size * aspectRatio
 
 	def add(self, rect):
 		pass
