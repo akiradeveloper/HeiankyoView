@@ -12,8 +12,8 @@ map of Heian-kyo.
 ![Heian-kyo map](images/heiankyo.gif "Heian-kyo map")
 
 HeiankyoView is originally developed by Takayuki Itoh and
-the algorithm is improved later by a brilliant bachelor student
-whose name is Akira Hayakawa.
+the algorithm is improved later by an outstanding bachelor student
+whose name is Akira Hayakawa in Kyoto university.
  
 ## Developer Info
 Akira Hayakawa(@akiradeveloper)  
