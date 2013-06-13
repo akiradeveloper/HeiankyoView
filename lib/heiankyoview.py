@@ -115,7 +115,7 @@ class PackingGrid:
 	def __init__(self, left, right, bottom, top):
 		self.xCoord = Coordinate(left, right)
 		self.yCoord = Coordinate(bottom, top)
-		self.boolT = BoolTable()
+		self.boolT = BoolTable(1, 1)
 		self.candidates = []
 
 	def center(self):
@@ -219,7 +219,7 @@ class RectanglePacking:
 		size = w * h
 		return size * aspectRatio
 
-	def _add(self, rect):
+	def addAnother(self, rect):
 
 		bestEval = float("inf")
 
@@ -299,9 +299,9 @@ class RectanglePacking:
 
 	def add(self, rect):
 		if not self.grid:
-			self.grid = PackingGrid()
+			self.grid = PackingGrid(0, rect.w, 0, rect.h)
 			return
-		self._add(rect)
+		self.addAnother(rect)
 
 class TreePacking:
 	def __init__(self, tree):
