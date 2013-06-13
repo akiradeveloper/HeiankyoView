@@ -98,6 +98,18 @@ class Coordinate:
 	def width(self):
 		return self.maxLine() - self.minLine()
 
+class Placement:
+	def __init__(self, left, right, bottom, top):	
+		self.left = left
+		self.right = right
+		self.bottom = bottom
+		self.top = top
+
+	def x(self):
+		return (self.right - self.left) / 2
+	def y(self):
+		return (self.top - self.bottom) / 2
+
 class PackingGrid:
 
 	def __init__(self, left, right, bottom, top):
@@ -163,12 +175,6 @@ class PackingGrid:
 		self.collectCandidate(iLeft, iRight, jBottom, jTop, position)
 		self.updateBoolT(iLeft, iRight - 1, jBottom, jTop - 1)
 
-	class Placement:
-		def __init__(self, left, right, bottom, top):	
-			self.left = left
-			self.right = right
-			self.bottom = bottom
-			self.top = top
 
 	def getPlacement(self, x, y, position, w, h):
 		r = None
@@ -288,8 +294,8 @@ class RectanglePacking:
 		if not decisionOutside:
 			self.grid.candidates.pop(decisionIdx)
 
-		rect.x = pm.x
-		rect.y = pm.y
+		rect.x = pm.x()
+		rect.y = pm.y()
 
 	def add(self, rect):
 		if not self.grid:
