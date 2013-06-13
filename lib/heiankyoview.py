@@ -179,10 +179,10 @@ class PackingGrid:
 
 	def tryPlacement(self, x, y, position, w, h):
 		pm = getPlacement(x, y, position, w, h)
-		left = min(pm.left, self.xCoord.minLine())
-		right = max(pm.right, self.xCoord.maxLine())
+		left   = min(pm.left, self.xCoord.minLine())
+		right  = max(pm.right, self.xCoord.maxLine())
 		bottom = min(pm.bottom, self.yCoord.minLine())
-		top = max(pm.top, self.yCoord.maxLine())
+		top    = max(pm.top, self.yCoord.maxLine())
 		return (right-left, top-bottom)
 
 	def place(self, i, j, position, w, h):
