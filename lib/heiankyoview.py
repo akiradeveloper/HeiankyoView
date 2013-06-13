@@ -16,7 +16,6 @@ class Candidate:
 		self.position = position
 
 class Rectangle:
-
 	def __init__(self):
 		self.x = 0
 		self.y = 0
@@ -96,12 +95,14 @@ class Coordinate:
 		return self.L[0]
 	def maxLine(self):
 		return self.L[self.L.size() - 1]
+	def width(self):
+		return self.maxLine() - self.minLine()
 
 class PackingGrid:
 
-	def __init__(self):
-		self.xCoord = Coordinate()
-		self.yCoord = Coordinate()
+	def __init__(self, left, right, bottom, top):
+		self.xCoord = Coordinate(left, right)
+		self.yCoord = Coordinate(bottom, top)
 		self.boolT = BoolTable()
 		self.candidates = []
 
@@ -152,25 +153,54 @@ class PackingGrid:
 		addI = 1 if bx else 0
 		addJ = 1 if by else 0
 
+		#TODO
+
 		self.collectCandidate(iLeft, iRight, jBottom, jTop, position)
 		self.updateBoolT(iLeft, iRight - 1, jBottom, jTop - 1)
-	
+
+	class Placement:
+		def __init__(self, left, right, bottom, top):	
+			self.left = left
+			self.right = right
+			self.bottom = bottom
+			self.top = top
+
+	def getPlacement(self, x, y, position, w, h):
+		r = None
+		if position == CornerPosition.RIGHT_UP:
+			r = Placement(x, x+w, y, y+h)
+		if position == CornerPosition.RIGHT_DOWN:
+			r = Placement(x, x+w, y-h, y)
+		if position == CornerPosition.LEFT_UP:
+			r = Placement(x-w, x, y, y+h)
+		if position == CornerPosition.LEFT_DOWN:		
+			r = Placement(x-w, x, y-h, y)
+		return r
+
+	def tryPlacement(self, x, y, position, w, h):
+		pm = getPlacement(x, y, position, w, h)
+		left = min(pm.left, self.xCoord.minLine())
+		right = max(pm.right, self.xCoord.maxLine())
+		bottom = min(pm.bottom, self.yCoord.minLine())
+		top = max(pm.top, self.yCoord.maxLine())
+		return (right-left, top-bottom)
+
 	def place(self, i, j, position, w, h):
 		x = self.xCoord[i]
 		y = self.yCoord[j]
-
+		pm = getPlacement(x, y, position, w, h)
 		if position == CornerPosition.RIGHT_UP:
-			self.plac(i, j, position, x + w, y + h)
+			self.plac(i, j, position, pm.right, pm.top)
 		if position == CornerPosition.RIGHT_DOWN:
-			self.plac(i, j, position, x + w, y - h)
+			self.plac(i, j, position, pm.right, pm.bottom)
 		if position == CornerPosition.LEFT_UP:
-			self.plac(i, j, position, x - w, y + h)
+			self.plac(i, j, position, pm.left, pm.top)
 		if position == CornerPosition.LEFT_DOWN:		
-			self.plac(i, j, position, x - w, y - h)
+			self.plac(i, j, position, pm.left, pm.bottom)
 
 class RectanglePacking:
 	def __init__(self):
-		self.grid = PackingGrid()
+		self.grid = None
 		pass
 
 	def evaluatePlacement(w, h):
@@ -178,8 +208,47 @@ class RectanglePacking:
 		size = w * h
 		return size * aspectRatio
 
-	def add(self, rect):
+	def _add(self, rect):
+
+		bestEval = 
+		for i in reversed(xrange(0, self.grid.candidates.size())):
+			candidate = self.grid.candidates[i]
+
+			gridIdx = self.grid.getGridIndex(
+					candidate.x,
+					candidate.y,
+					candidate.position)
+	
+			if self.grid.isOccupied(gridIdx[0], gridIdx[1]):
+				self.grid.candidates.pop(i)
+				continue
+
+			if self.intersects(x, y, position, rect.w, rect.h):
+				#self.grid.candidates.pop(i)
+				continue
+
+			tryW, tryH = self.grid.tryPlacement(x, y, position, rect.w, rect.h)
+			tryEval = self.evaluatePlacement(tryW, tryH)
+
+			currentsize = self.xCoord.width() * self.yCoord.width()
+			if (tryW * tryH) <= currentsize:
+				bestEval = tryEval
+				decision = candidate
+				break
+
+			if tryEval < bestEval:
+				bestEval = tryEval
+				decision = candidate
+
+		#TODO
+			
 		pass
+
+	def add(self, rect):
+		if not self.grid:
+			self.grid = PackingGrid()
+			return
+		self._add()
 
 class TreePacking:
 	def __init__(self, tree):
@@ -207,13 +276,7 @@ class TreePacking:
 			outline = packer.grid.outline()
 
 			r = self.tree.getRect(branch)
-			# set r
-		
-	def translate(x, y):
-		pass
-
-	def shrinkBy(length):
-		pass
+			#TODO set r
 
 class Graph:
 	def __init__(self):
