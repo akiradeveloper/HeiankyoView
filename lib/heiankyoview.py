@@ -219,6 +219,7 @@ class RectanglePacking:
 
 		for i in reversed(xrange(0, self.grid.candidates.size())):
 			candidate = self.grid.candidates[i]
+			decisionIdx = i
 
 			gridIdx = self.grid.getGridIndex(
 					candidate.x,
@@ -246,15 +247,55 @@ class RectanglePacking:
 				bestEval = tryEval
 				decision = candidate
 
-		#TODO
+		decisionOutside = False
+
+
+		leftDownCorner = (
+				self.grid.xCoord.minLine(),
+				self.grid.yCoord.minLine())
+		tryW1, tryH1 = self.grid.tryPlacement(leftDownCorner[0], leftDownCorner[1], CornerPosition.RIGHT_DOWN)
+		tryEval1 = self.evaluatePlacement(tryW1, tryH1)
+		if tryEval1 < bestEval:
+			bestEval = tryEval1
+			decision = Candidate(leftDownCorner[0], leftDownCorner[1], CornerPosition.RIGHT_DOWN)
+			decisionOutside = True
+
+
+		rightUpCorner = (
+				self.grid.xCoord.maxLine(),
+				self.grid.yCoord.maxLine())
+		tryW2, tryH2 = self.grid.tryPlacement(rightUpCorner[0], rightUpCorner[1], CornerPosition.RIGHT_DOWN)
+		tryEval2 = self.evaluatePlacement(tryW2, tryH2)
+		if tryEval2 < bestEval:
+			bestEval = tryEval2
+			decision = Candidate(rightUpCorner[0], rightUpCorner[1], CornerPosition.RIGHT_DOWN)
+			decisionOutside = True
+
+		pm = self.grid.getPlacement(
+				decision.x,
+				decision.y,
+				decision.position,
+				rect.w,
+				rect.h)
 			
-		pass
+		self.grid.place(
+				self.grid.xCoord.indexOf(decision.x),
+				self.grid.yCoord.indexOf(decision.y),
+				decision.position,
+				rect.w,
+				rect.h)
+
+		if not decisionOutside:
+			self.grid.candidates.pop(decisionIdx)
+
+		rect.x = pm.x
+		rect.y = pm.y
 
 	def add(self, rect):
 		if not self.grid:
 			self.grid = PackingGrid()
 			return
-		self._add()
+		self._add(rect)
 
 class TreePacking:
 	def __init__(self, tree):
