@@ -23,13 +23,13 @@ class Rectangle:
 		self.h = 0
 
 	def left(self):		
-		return x - w
+		return x - w / 2
 	def right(self):
-		return x + w
+		return x + w / 2
 	def up(self):
-		return y + h
+		return y + h / 2
 	def bottom(self):
-		return y - h
+		return y - h / 2
 
 class Table:
 	def __self__(self, N, M, value):
@@ -105,6 +105,11 @@ class PackingGrid:
 		self.yCoord = Coordinate(bottom, top)
 		self.boolT = BoolTable()
 		self.candidates = []
+
+	def center(self):
+		x = self.xCoord.minLine() + self.xCoord.width() / 2
+		y = self.yCoord.minLine() + self.yCoord.width() / 2
+		return (x, y)
 
 	def updateBoolT(self, iGridMin, iGridMax, jGridMin, jGridMax):
 		for i in xrange(iGridMin, iGridMax + 1):
@@ -210,7 +215,8 @@ class RectanglePacking:
 
 	def _add(self, rect):
 
-		bestEval = 
+		bestEval = float("inf")
+
 		for i in reversed(xrange(0, self.grid.candidates.size())):
 			candidate = self.grid.candidates[i]
 
