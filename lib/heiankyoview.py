@@ -10,7 +10,7 @@ class CornerPosition:
 	RIGHT_DOWN = 3
 
 class Candidate:
-	def __init__(x, y, position):
+	def __init__(self, x, y, position):
 		self.x = x
 		self.y = y
 		self.position = position
@@ -30,6 +30,9 @@ class Rectangle:
 		return y + h / 2
 	def bottom(self):
 		return y - h / 2
+
+	def size(self):
+		return self.w * self.h
 
 class Table:
 	def __self__(self, N, M, value):
@@ -53,15 +56,19 @@ class BoolT:
 		self.n = N
 		self.m = M
 		self.matrix = Table(N, M, False)
-	def expandN(startI, addI):
-		ensureN(addI)
+
+	def ensureI(self, addI):		
+		pass
+	def mvI(startI, addI):
+		pass
+	def expandI(self, startI, addI):
+		self.ensureI(addI)
 		self.n += addI
-		mvN(startI, addI)
-	def mvN(startI, addI):
+		self.mvI(startI, addI)
+
+	def mvJ(startJ, addJ):
 		pass
-	def expandM(startJ, addJ):
-		pass
-	def mvM(startJ, addJ):
+	def expandJ(startJ, addJ):
 		pass
 
 class BoolTable:
@@ -78,18 +85,41 @@ class BoolTable:
 	def n():
 		return self.boolT.n - 2
 	def m():
-		pass
-	def expandN(startI, addI):
-		self.boolT.expandN(adjustI(startI), addI)
-	def expandM(startJ, addJ):
-		pass
+		return self.boolT.m - 2
+	def expandI(startI, addI):
+		self.boolT.expandI(self.adjustI(startI), addI)
+	def expandJ(startJ, addJ):
+		self.boolT.expandJ(self.adjustJ(startJ), addJ)
+
+class BinarySearch:
+	NOT_FOUND = -1
+	def binarySearch(self, L, x, left, right):
+		if right < left:
+			return self.NOT_FOUND
+
+		mid = (left + right) / 2
+		if x > L[mid]:
+			return self.binarySearch(L, x, mid + 1, right)
+		elif x < L[mid]:
+			return self.binarySearch(L, x, left, mid - 1)
+		else:
+			return mid
+
+	def search(self, L, x):
+		left = 0
+		right = len(L) - 1
+		return self.binarySearch(L, x, left, right)
+
+def binSearch(L, x):
+	bs = BinarySearch()
+	return bs.search(L, x)
 
 class Coordinate:
 	def __init__(self, minLine, maxLine):
 		self.L = [minLine, maxLine]
 	def size(self):
-		self.L.size()
-	def indexOf(line):
+		return self.L.size()
+	def indexOf(self, line):
 		return binSearch(self.L, line)
 	def minLine(self):
 		return self.L[0]
@@ -160,7 +190,7 @@ class PackingGrid:
 		bx = not newXLine in self.xCoord
 		if bx:
 			addNewXLine(newXLine)	
-		by = not newYLine in self.xCoord
+		by = not newYLine in self.yCoord
 		if by:
 			addNewYLine(newYLine)		
 
@@ -175,7 +205,6 @@ class PackingGrid:
 		self.collectCandidate(iLeft, iRight, jBottom, jTop, position)
 		self.updateBoolT(iLeft, iRight - 1, jBottom, jTop - 1)
 
-
 	def getPlacement(self, x, y, position, w, h):
 		r = None
 		if position == CornerPosition.RIGHT_UP:
@@ -189,7 +218,7 @@ class PackingGrid:
 		return r
 
 	def tryPlacement(self, x, y, position, w, h):
-		pm = getPlacement(x, y, position, w, h)
+		pm = self.getPlacement(x, y, position, w, h)
 		left   = min(pm.left, self.xCoord.minLine())
 		right  = max(pm.right, self.xCoord.maxLine())
 		bottom = min(pm.bottom, self.yCoord.minLine())
@@ -199,7 +228,7 @@ class PackingGrid:
 	def place(self, i, j, position, w, h):
 		x = self.xCoord[i]
 		y = self.yCoord[j]
-		pm = getPlacement(x, y, position, w, h)
+		pm = self.getPlacement(x, y, position, w, h)
 		if position == CornerPosition.RIGHT_UP:
 			self.plac(i, j, position, pm.right, pm.top)
 		if position == CornerPosition.RIGHT_DOWN:
@@ -303,63 +332,74 @@ class RectanglePacking:
 			return
 		self.addAnother(rect)
 
+def BFS(tree):
+	L1 = []
+	L2 = []
+	L1.append(tree.getRoot())	
+	while L1:
+		id = L1.pop()
+		L2.append(id)
+		for child in tree.getChildren(id):
+			L1.append(child)
+	return L2
+
 class TreePacking:
 	def __init__(self, tree):
 		self.tree = tree
 
-	def listBFS(self):
-		L1 = []
-		L2 = []
-		L1.append(self.tree.getRoot())	
-		while not L1:
-			L2.append(L1.pop())
-			for child in self.tree.children(id):
-				L1.append(child)
-		return L2
-
 	def pack(self):
-		L = self.listBFS()
+		L = BFS(self.tree)
 		L = filter(lambda id: not self.tree.isLeaf(id), L)
 		L.reverse()
 		for branch in L:
 			packer = RectanglePacking()
-			for child in self.tree.children(branch):
-				packer.add(self.tree.getRect(child)
+			rects = [self.tree.getRect(child) for child in self.tree.children(branch)]
 
-			outline = packer.grid.outline()
+			def f(r1, r2):
+				return r2.size() - r1.size()
+			for rect in sorted(rects, cmp=f):
+				packer.add(rect)
 
 			r = self.tree.getRect(branch)
-			#TODO set r
+			r.x, r.y = packer.grid.center()
+			r.w, r.h = packer.grid.xCoord.width(), packer.grid.yCoord.width()
 
 class Graph:
 	def __init__(self):
-		nodes = {}
-		children = {}
+		self.nodes = {}
+		self.children = {}
+		self.root = None
 
 	def isLeaf(self, id):
-		pass
+		return not id in self.children
 
 	def addNode(self, id):
-		if id in nodes:
+		if id in self.nodes:
 			return
+		if not self.root:
+			self.root = id
 		r = Rectangle()
-		nodes[id] = r
+		self.nodes[id] = r
 
 	def getRect(self, id):
-		if not id in nodes:
+		if not id in self.nodes:
 			return None
-		return nodes[id]
+		return self.nodes[id]
 	
-	def children(self, id):
-		return children[id]
+	def getChildren(self, id):
+		if self.isLeaf(id):
+			return []
+		return self.children[id]
 
 	def addChild(self, parent, child):
-		if not parent in edges:
-			children[parent] = []
-		children[parent].append(child)
+		if not parent in self.children:
+			self.children[parent] = []
+		self.children[parent].append(child)
+		if child == self.root:
+			self.root = parent
 
 	def getRoot(self):
-		pass
+		return self.root
 
 if __name__ ==  '__main__':
 	pass

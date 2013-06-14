@@ -1,0 +1,34 @@
+#!/usr/bin/env/ python
+
+import heiankyoview as H
+
+if __name__ == '__main__':
+	f = open(fn)
+
+	E = []
+
+	V = []
+	for src,dest in E:
+		V.append(src)
+		V.append(dest)
+	V = set(V)
+
+	g = H.Graph
+	for n in V:
+		g.addNode(n)
+	for e in E:
+		src,dest = e
+		g.addChild(src, dest)
+
+
+	tp = TreePacking(g)	
+	tp.pack()
+
+	nodes = []
+	L = BFS(g)
+	for n in L:
+		rect = g.getRect(n)
+		nodes.append( (n, rect.x, rect.y, rect.w, rect.h) )
+
+	output = "\n".join( ["%d %f %f %f %f" % t for t in nodes] )
+	print(output)
