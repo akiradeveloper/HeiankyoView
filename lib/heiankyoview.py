@@ -35,61 +35,112 @@ class Rectangle:
 		return self.w * self.h
 
 class Table:
-	def __self__(self, N, M, value):
+	def __init__(self, N, M, value):
 		self.matrix = []
-		for i in N:
+		for i in xrange(0, N):
 			self.matrix.append([])
-			for j in M:
+			for j in xrange(0, M):
 				arr = self.matrix[i]
 				arr.append(value)
+		self.N = N
+		self.M = M
 	def set(self, i, j, value):
 		self.matrix[i][j] = value
 	def get(self, i, j):
 		return self.matrix[i][j]
-	def doubleN(self):
-		pass
-	def doubleM(self):
-		pass
+	def backup(self, to):
+		for i in xrange(0, self.N):
+			for j in xrange(0, self.M):
+				to.set(i, j, self.get(i, j))
+	def show(self):
+		for i in xrange(0, self.N):
+			for j in xrange(0, self.M):
+				print(i, j)
+				print(self.get(i, j))	
 
 class BoolT:
-	def __self__(self, N, M):
+	def __init__(self, N, M):
 		self.n = N
 		self.m = M
 		self.matrix = Table(N, M, False)
 
+	def doubleN(self):
+		m = Table(self.matrix.N * 2, self.matrix.M, False)
+		self.matrix.backup(m)
+		self.matrix = m
 	def ensureI(self, addI):		
-		pass
-	def mvI(startI, addI):
-		pass
+		if self.n + addI > self.matrix.N:
+			self.doubleN()
+	def mvI(self, startI, addI):
+		# print(startI)
+		# print(addI)
+		# print(self.n)
+		for i in reversed( xrange(startI + addI, self.n) ):
+			#print(i)
+			for j in xrange(0, self.m):
+				# print(self.matrix.get(i - addI, j))
+				self.matrix.set(i, j, self.matrix.get(i - addI, j))
+				# print(i, j)
+				# print(self.matrix.get(i, j))
+		for i in xrange(startI, startI + addI):
+			for j in xrange(0, self.m):
+				self.matrix.set(i, j, False)
 	def expandI(self, startI, addI):
 		self.ensureI(addI)
 		self.n += addI
 		self.mvI(startI, addI)
 
-	def mvJ(startJ, addJ):
-		pass
-	def expandJ(startJ, addJ):
-		pass
+	def doubleM(self):
+		m  = Table(self.matrix.N, self.matrix.M * 2, False)
+		self.matrix.backup(m)
+		self.matrix = m
+	def ensureJ(self, addJ):
+		if self.m + addJ > self.matrix.M:
+			self.doubleM()
+	def mvJ(self, startJ, addJ):
+		for i in xrange(0, self.n):
+			for j in reversed( xrange(startJ + addJ, self.m) ):
+				self.matrix.set(i, j, self.matrix.get(i, j - addJ))
+				#print(i, j)
+				#print(self.matrix.get(i, j))
+		for i in xrange(0, self.n):
+			for j in xrange(startJ, startJ + addJ):
+				self.matrix.set(i, j, False)
+	def expandJ(self, startJ, addJ):
+		self.ensureJ(addJ)
+		self.m += addJ
+		self.mvJ(startJ, addJ)
 
 class BoolTable:
-	def __self__(self, N, M):
+	def __init__(self, N, M):
 		self.boolT = BoolT(N+2, M+2)
-	def adjustI(i):
+	def adjustI(self, i):
 		return i + 1
-	def adjustJ(j):
+	def adjustJ(self, j):
 		return j + 1
-	def get(i, j):
-		pass
-	def set(i, j, b):
-		pass
-	def n():
+
+	def get(self, i, j):
+		return self.boolT.matrix.get(self.adjustI(i), self.adjustJ(j))
+	def set(self, i, j, b):
+		self.boolT.matrix.set(self.adjustI(i), self.adjustJ(j), b)
+	def n(self):
 		return self.boolT.n - 2
-	def m():
+	def m(self):
 		return self.boolT.m - 2
-	def expandI(startI, addI):
+	def expandI(self, startI, addI):
 		self.boolT.expandI(self.adjustI(startI), addI)
-	def expandJ(startJ, addJ):
+	def expandJ(self, startJ, addJ):
 		self.boolT.expandJ(self.adjustJ(startJ), addJ)
+	def show(self):
+		print("show table")
+		#self.boolT.matrix.show()
+		print(self.n())
+		print(self.m())
+		for i in xrange(0, self.n()):
+			for j in xrange(0, self.m()):
+				# print(j)
+				print(i, j)
+				print(self.get(i, j))	
 
 class BinarySearch:
 	NOT_FOUND = -1
@@ -141,7 +192,6 @@ class Placement:
 		return (self.top - self.bottom) / 2
 
 class PackingGrid:
-
 	def __init__(self, left, right, bottom, top):
 		self.xCoord = Coordinate(left, right)
 		self.yCoord = Coordinate(bottom, top)
@@ -350,8 +400,7 @@ class TreePacking:
 	def pack(self):
 		L = BFS(self.tree)
 		L = filter(lambda id: not self.tree.isLeaf(id), L)
-		L.reverse()
-		for branch in L:
+		for branch in reversed(L):
 			packer = RectanglePacking()
 			rects = [self.tree.getRect(child) for child in self.tree.children(branch)]
 
