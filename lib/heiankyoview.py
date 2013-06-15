@@ -179,6 +179,20 @@ class Coordinate:
 	def width(self):
 		return self.maxLine() - self.minLine()
 
+	def getRightIntersection(self, i, line):
+		for j in xrange(j+1, self.size()):
+			upper = self.L[j]
+			if line < upper:
+				return (i, j)
+		return (i, self.size())	
+
+	def getLeftIntersection(self, i, line):
+		for j in reversed(xrange(0, i)):
+			lower = self.L[j]
+			if line > lower:
+				return (j, i-1)
+		return (-1, i-1)
+
 class Placement:
 	def __init__(self, left, right, bottom, top):	
 		self.left = left
@@ -288,10 +302,49 @@ class PackingGrid:
 		if position == CornerPosition.LEFT_DOWN:		
 			self.plac(i, j, position, pm.left, pm.bottom)
 
+	def isOccupied(self, i, j):
+		return self.boolT.get(i, j)
+
+	def calcIntersectableRegion(self, x, y, position, w, h):
+		int I = self.xCoord.indexOf(x)
+		int J = self.yCoord.indexOf(y)
+
+		def ru():
+			_, a = self.xCoord.getRightIntersection(I, x + w)
+			_, b = self.yCoord.getRightIntersection(J, y + h)
+			return (I, a, J, b)
+		def rd():
+			_, a = self.xCoord.getRightIntersection(I, x + w)
+			b, _ = self.yCoord.getLeftIntersection(J, y - h)
+			return (I, a, b, J-1)
+		def lu():
+			a, _ = self.xCoord.getLeftIntersection(I, x - w)
+			_, b = self.yCoord.getRightIntersection(J, y + h)
+			return (a, I-1, J, b)
+		def ld():
+			a, _ = self.xCoord.getLeftIntersection(I, x - w)
+			b, _ = self.yCoord.getLeftIntersection(J, y - h)
+			return (a, I-1, b, J-1)
+		
+		m = {
+				CornerPosition.RIGHT_UP   : ru(),
+				CornerPosition.RIGHT_DOWN : rd(),
+				CornerPosition.LEFT_UP    : lu(),
+				CornerPosition.LEFT_DOWN  : ld(),
+		}
+		return m[position]
+
+	def intersects(self, x, y, position, w, h):
+		iLeft, iRight, jBottom, jTop = self.calcIntersectableRegion(x, y, position, w, h)
+		for i in xrange(iLeft, iRight + 1):
+			for j in xrange(jBottom, jTop + 1):
+				if self.isOccupied(i, j):
+					return True
+		return False
+
 class RectanglePacking:
 	def __init__(self):
 		self.grid = None
-		pass
 
 	def evaluatePlacement(w, h):
 		aspectRatio = max( w/h, h/w )
@@ -315,7 +368,7 @@ class RectanglePacking:
 				self.grid.candidates.pop(i)
 				continue
 
-			if self.intersects(x, y, position, rect.w, rect.h):
+			if self.grid.intersects(x, y, position, rect.w, rect.h):
 				#self.grid.candidates.pop(i)
 				continue
 
@@ -334,7 +387,6 @@ class RectanglePacking:
 
 		decisionOutside = False
 
-
 		leftDownCorner = (
 				self.grid.xCoord.minLine(),
 				self.grid.yCoord.minLine())
@@ -344,7 +396,6 @@ class RectanglePacking:
 			bestEval = tryEval1
 			decision = Candidate(leftDownCorner[0], leftDownCorner[1], CornerPosition.RIGHT_DOWN)
 			decisionOutside = True
-
 
 		rightUpCorner = (
 				self.grid.xCoord.maxLine(),
@@ -412,6 +463,8 @@ class TreePacking:
 			r = self.tree.getRect(branch)
 			r.x, r.y = packer.grid.center()
 			r.w, r.h = packer.grid.xCoord.width(), packer.grid.yCoord.width()
+
+		#TODO align
 
 class Graph:
 	def __init__(self):
