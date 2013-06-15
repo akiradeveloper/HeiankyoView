@@ -14,6 +14,8 @@ class Candidate:
 		self.x = x
 		self.y = y
 		self.position = position
+	def show(self):
+		print( (self.x, self.y, self.position) )
 
 class Rectangle:
 	def __init__(self):
@@ -21,6 +23,8 @@ class Rectangle:
 		self.y = 0
 		self.w = 0
 		self.h = 0
+	def show(self):		
+		print(self.x, self.y, self.w, self.h)
 
 	def left(self):		
 		return x - 0.5 * w
@@ -180,7 +184,7 @@ class Coordinate:
 	def __init__(self, minLine, maxLine):
 		self.L = [minLine, maxLine]
 	def get(self, i):
-		return 
+		return self.L[i]
 	def insert(self, i, line):
 		self.L.insert(i, line)
 	def size(self):
@@ -209,6 +213,8 @@ class Coordinate:
 			if line >= lower:
 				return (j, i-1)
 		return (-1, i-1)
+	def show(self):
+		print(self.L)
 
 class Placement:
 	def __init__(self, left, right, bottom, top):	
@@ -229,14 +235,15 @@ class PackingGrid:
 		self.xCoord = Coordinate(left, right)
 		self.yCoord = Coordinate(bottom, top)
 		self.boolT = BoolTable(1, 1)
+		self.boolT.set(0, 0, True)
 		self.candidates = []
 
 	def isOccupied(self, i, j):
 		return self.boolT.get(i, j)
 
 	def center(self):
-		x = self.xCoord.minLine() + self.xCoord.width() / 2
-		y = self.yCoord.minLine() + self.yCoord.width() / 2
+		x = self.xCoord.minLine() + 0.5 * self.xCoord.width()
+		y = self.yCoord.minLine() + 0.5 * self.yCoord.width()
 		return (x, y)
 
 	def updateBoolT(self, iGridMin, iGridMax, jGridMin, jGridMax):
@@ -267,13 +274,18 @@ class PackingGrid:
 		return cornerType
 
 	def collectCandidates(self, iLeft, iRight, jBottom, jTop, position):
+		print("collect")
 		def OneSide(i, j, base, target):
 			if self.getCornerType(i, j, base, target) == CornerType.ADJACENT:
-				self.candidates.append( 
-						Candidate(
-							self.xCoord.get(i), 
-							self.yCoord.get(j),
-							target))
+				print(i, j)
+				self.xCoord.show()
+				self.yCoord.show()
+				c = Candidate(
+						self.xCoord.get(i), 
+						self.yCoord.get(j),
+						target)
+				c.show()
+				self.candidates.append(c)
 		def Vertical(i, start, end, lowerPos, upperPos):
 			OneSide(i, start, lowerPos, upperPos)
 			for j in xrange(start+1, end):
@@ -350,22 +362,27 @@ class PackingGrid:
 		}
 		I, J = m[position]
 
-		if self.xCoord.has(newXLine):
+		if not self.xCoord.has(newXLine):
+			print("new xline")
 			mid = self.xCoord.minLine() < newXLine < self.xCoord.maxLine()
 			self.xCoord.insert(I, newXLine)
-			self.boolT.expandI(self, I, 1)
+			self.boolT.expandI(I, 1)
 			if mid:
 				self.boolT.copyI(I-1, I)
 
-		if self.yCoord.has(newYLine):
+		if not self.yCoord.has(newYLine):
+			print("new yline")
 			mid = self.yCoord.minLine() < newYLine < self.yCoord.maxLine()
 			self.yCoord.insert(J, newYLine)
-			self.boolT.expandJ(self, J, 1)
+			self.boolT.expandJ(J, 1)
 			if mid:
 				self.boolT.copyJ(J-1, J)
 
 		iLeft, iRight, jBottom, jTop = self.calcIntersectableRegion(x, y, position, w, h)
+		print("inter region")
+		print(iLeft, iRight, jBottom, jTop)
 		self.updateBoolT(iLeft, iRight, jBottom, jTop)
+		self.boolT.show()
 		self.collectCandidates(iLeft, iRight + 1, jBottom, jTop + 1, position)
 
 	def getPlacement(self, x, y, position, w, h):
@@ -390,21 +407,24 @@ class PackingGrid:
 
 	def place(self, x, y, position, w, h):
 		pm = self.getPlacement(x, y, position, w, h)
+		pm.show()
 		if position == CornerPosition.RIGHT_UP:
 			self.plac(x, y, position, pm.right, pm.top)
-		if position == CornerPosition.RIGHT_DOWN:
+		elif position == CornerPosition.RIGHT_DOWN:
 			self.plac(x, y, position, pm.right, pm.bottom)
-		if position == CornerPosition.LEFT_UP:
+		elif position == CornerPosition.LEFT_UP:
 			self.plac(x, y, position, pm.left, pm.top)
-		if position == CornerPosition.LEFT_DOWN:		
+		elif position == CornerPosition.LEFT_DOWN:		
 			self.plac(x, y, position, pm.left, pm.bottom)
+		else:
+			raise RuntimeError
 
 class RectanglePacking:
 	def __init__(self):
 		self.grid = None
 
 	def evaluatePlacement(self, w, h):
-		aspectRatio = max( w/h, h/w )
+		aspectRatio = max( float(w)/h, float(h)/w )
 		size = w * h
 		return size * aspectRatio
 
@@ -412,9 +432,11 @@ class RectanglePacking:
 		bestEval = float("inf")
 
 		for i in reversed(xrange(0, len(self.grid.candidates))):
+			print("candidate")
 			candidate = self.grid.candidates[i]
 			decisionIdx = i
 
+			candidate.show()
 			X = candidate.x
 			Y = candidate.y
 			P = candidate.position
@@ -432,13 +454,15 @@ class RectanglePacking:
 			tryW, tryH = self.grid.tryPlacement(X, Y, P, rect.w, rect.h)
 			tryEval = self.evaluatePlacement(tryW, tryH)
 
-			currentsize = self.xCoord.width() * self.yCoord.width()
+			currentsize = self.grid.xCoord.width() * self.grid.yCoord.width()
 			if (tryW * tryH) <= currentsize:
+				print("size not change! tryEval % f" % tryEval)
 				bestEval = tryEval
 				decision = candidate
 				break
 
 			if tryEval < bestEval:
+				print("size changed by candidate placed. tryEval %f" % tryEval)
 				bestEval = tryEval
 				decision = candidate
 
@@ -449,8 +473,9 @@ class RectanglePacking:
 				self.grid.yCoord.minLine())
 		tryW1, tryH1 = self.grid.tryPlacement(leftDownCorner[0], leftDownCorner[1], CornerPosition.RIGHT_DOWN, rect.w, rect.h)
 		tryEval1 = self.evaluatePlacement(tryW1, tryH1)
-		print(tryEval1)
+		print("tryEval1 % f" % tryEval1)
 		if tryEval1 < bestEval:
+			print("choose outside candidate 1")
 			bestEval = tryEval1
 			decision = Candidate(leftDownCorner[0], leftDownCorner[1], CornerPosition.RIGHT_DOWN)
 			decisionOutside = True
@@ -460,8 +485,9 @@ class RectanglePacking:
 				self.grid.yCoord.maxLine())
 		tryW2, tryH2 = self.grid.tryPlacement(rightUpCorner[0], rightUpCorner[1], CornerPosition.RIGHT_DOWN, rect.w, rect.h)
 		tryEval2 = self.evaluatePlacement(tryW2, tryH2)
-		print(tryEval2)
+		print("tryEval2 %f" % tryEval2)
 		if tryEval2 < bestEval:
+			print("choose outside candidate 2")
 			bestEval = tryEval2
 			decision = Candidate(rightUpCorner[0], rightUpCorner[1], CornerPosition.RIGHT_DOWN)
 			decisionOutside = True
@@ -472,8 +498,9 @@ class RectanglePacking:
 				decision.position,
 				rect.w,
 				rect.h)
-		pm.show()
+		# pm.show()
 			
+		print("place")
 		self.grid.place(
 				decision.x,
 				decision.y,
