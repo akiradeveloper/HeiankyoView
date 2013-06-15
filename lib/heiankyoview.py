@@ -143,10 +143,9 @@ class BoolTable:
 				print(self.get(i, j))	
 
 class BinarySearch:
-	NOT_FOUND = -1
 	def binarySearch(self, L, x, left, right):
 		if right < left:
-			return self.NOT_FOUND
+			return -1
 
 		mid = (left + right) / 2
 		if x > L[mid]:
@@ -155,7 +154,6 @@ class BinarySearch:
 			return self.binarySearch(L, x, left, mid - 1)
 		else:
 			return mid
-
 	def search(self, L, x):
 		left = 0
 		right = len(L) - 1
@@ -168,6 +166,8 @@ def binSearch(L, x):
 class Coordinate:
 	def __init__(self, minLine, maxLine):
 		self.L = [minLine, maxLine]
+	def get(self, i):
+		return 
 	def insert(self, i, line):
 		self.L.insert(i, line)
 	def size(self):
@@ -233,21 +233,54 @@ class PackingGrid:
 		}
 		return m[position]
 
-	def getCornerType(self, i, j, checkCorner, adjacentCorner):
-		ic, jc = self.getGridIndex(i, j, checkCorner)
-		ia, ja = self.getGridIndex(i, j, adjacentCorner)
+	def getCornerType(self, i, j, base, target):
+		i1, j1 = self.getGridIndex(i, j, base)
+		i2, j2 = self.getGridIndex(i, j, target)
 
-		if self.isOccupied(ic, jc):
+		if self.isOccupied(i2, j2):
 			cornerType = CornerType.OCCUPIED
 		else:
-			if self.isOccupied(ia, ja):
+			if self.isOccupied(i1, j1):
 				cornerType = CornerType.ADJACENT
 			else:
 				cornerType = CornerType.FREE
-
 		return cornerType
 
-	def plac(self, i, j, position, newXLine, newYLine):
+	def collectCandidates(self, iLeft, iRight, jBottom, jTop, position):
+		def OneSide(i, j, base, target):
+			if self.getCornerType(i, j, base, target) == CornerType.ADJACENT:
+				self.candidates.append( 
+						Candidate(
+							self.xCoord.get(i), 
+							self.yCoord.get(j),
+							target))
+		def Vertical(i, start, end, lowerPos, upperPos):
+			OneSide(i, start, lowerPos, upperPos)
+			for j in xrange(start+1, end):
+				OneSide(i, j, lowerPos, upperPos)
+				OneSide(i, j, upperPos, lowerPos)
+			OneSide(i, end, upperPos, lowerPos)
+		def HorizonTal(j, stard, end, leftPos, RightPos):
+			OneSide(start, j, leftPos, rightPos)
+			for i in xrange(start+1, end):
+				OneSide(i, j, leftPos)
+				OneSide(i, j, rightPos)
+			OneSide(end, j, RightPos, leftPos)
+		def Left():
+			Vertical(iLeft, jBottom, jTop, CornerPosition.LEFT_DOWN, CornerPosition.LEFT_UP)
+		def Right():
+			Vertical(iRight, jBottom, jTop, CornerPosition.RIGHT_DOWN, CornerPosition.RIGHT_UP)
+		def Bottom():
+			HorizonTal(jBottom, iLeft, iRight, CornerPosition.LEFT_DOWN, CornerPosition.RIGHT_DOWN)
+		def Upper():
+			HorizonTal(jTop, iLeft, iRight, CornerPosition.LEFT_UP, CornerPosition.RIGHT_UP)
+
+		Left()
+		Right()
+		Bottom()
+		Upper()
+
+	def plac(self, x, y, position, newXLine, newYLine):
 		def addNewXLine(newXLine):
 			pass
 		def addNewYLine(newYLine):
@@ -260,27 +293,23 @@ class PackingGrid:
 		if by:
 			addNewYLine(newYLine)		
 
-		newXLineIndex = self.xCoord.indexOf(newXLine)
-		newYLineIndex = self.yCoord.indexOf(newYLine)
+		w = abs(newXLine - x)
+		h = abs(newYLine - y)
 
-		addI = 1 if bx else 0
-		addJ = 1 if by else 0
-
-		#TODO
-
-		self.collectCandidate(iLeft, iRight, jBottom, jTop, position)
-		self.updateBoolT(iLeft, iRight - 1, jBottom, jTop - 1)
+		iLeft, iRight, jBottom, jTop = self.calcIntersectableRegion(x, y, position, w, h)
+		self.collectCandidates(iLeft, iRight + 1, jBottom, jTop + 1, position)
+		self.updateBoolT(iLeft, iRight, jBottom, jTop)
 
 	def getPlacement(self, x, y, position, w, h):
 		r = None
 		if position == CornerPosition.RIGHT_UP:
-			r = Placement(x, x+w, y, y+h)
+			r = Placement(x, x + w, y, y + h)
 		if position == CornerPosition.RIGHT_DOWN:
-			r = Placement(x, x+w, y-h, y)
+			r = Placement(x, x + w, y - h, y)
 		if position == CornerPosition.LEFT_UP:
-			r = Placement(x-w, x, y, y+h)
+			r = Placement(x - w, x, y, y + h)
 		if position == CornerPosition.LEFT_DOWN:		
-			r = Placement(x-w, x, y-h, y)
+			r = Placement(x - w, x, y - h, y)
 		return r
 
 	def tryPlacement(self, x, y, position, w, h):
@@ -291,18 +320,16 @@ class PackingGrid:
 		top    = max(pm.top, self.yCoord.maxLine())
 		return (right-left, top-bottom)
 
-	def place(self, i, j, position, w, h):
-		x = self.xCoord[i]
-		y = self.yCoord[j]
+	def place(self, x, y, position, w, h):
 		pm = self.getPlacement(x, y, position, w, h)
 		if position == CornerPosition.RIGHT_UP:
-			self.plac(i, j, position, pm.right, pm.top)
+			self.plac(x, y, position, pm.right, pm.top)
 		if position == CornerPosition.RIGHT_DOWN:
-			self.plac(i, j, position, pm.right, pm.bottom)
+			self.plac(x, y, position, pm.right, pm.bottom)
 		if position == CornerPosition.LEFT_UP:
-			self.plac(i, j, position, pm.left, pm.top)
+			self.plac(x, y, position, pm.left, pm.top)
 		if position == CornerPosition.LEFT_DOWN:		
-			self.plac(i, j, position, pm.left, pm.bottom)
+			self.plac(x, y, position, pm.left, pm.bottom)
 
 	def isOccupied(self, i, j):
 		return self.boolT.get(i, j)
@@ -354,27 +381,27 @@ class RectanglePacking:
 		return size * aspectRatio
 
 	def addAnother(self, rect):
-
 		bestEval = float("inf")
 
 		for i in reversed(xrange(0, self.grid.candidates.size())):
 			candidate = self.grid.candidates[i]
 			decisionIdx = i
 
-			gridIdx = self.grid.getGridIndex(
-					candidate.x,
-					candidate.y,
-					candidate.position)
+			X = candidate.x
+			Y = candidate.y
+			P = candidate.position
+
+			gridIdx = self.grid.getGridIndex(X, Y, P)
 	
 			if self.grid.isOccupied(gridIdx[0], gridIdx[1]):
 				self.grid.candidates.pop(i)
 				continue
 
-			if self.grid.intersects(x, y, position, rect.w, rect.h):
+			if self.grid.intersects(X, Y, P, rect.w, rect.h):
 				#self.grid.candidates.pop(i)
 				continue
 
-			tryW, tryH = self.grid.tryPlacement(x, y, position, rect.w, rect.h)
+			tryW, tryH = self.grid.tryPlacement(X, Y, P, rect.w, rect.h)
 			tryEval = self.evaluatePlacement(tryW, tryH)
 
 			currentsize = self.xCoord.width() * self.yCoord.width()
@@ -417,8 +444,8 @@ class RectanglePacking:
 				rect.h)
 			
 		self.grid.place(
-				self.grid.xCoord.indexOf(decision.x),
-				self.grid.yCoord.indexOf(decision.y),
+				decision.x,
+				decision.y,
 				decision.position,
 				rect.w,
 				rect.h)
@@ -453,10 +480,14 @@ class TreePacking:
 	def pack(self):
 		L = BFS(self.tree)
 		L = filter(lambda id: not self.tree.isLeaf(id), L)
+
+		#TODO set leafsize to 4*4
+
 		for branch in reversed(L):
 			packer = RectanglePacking()
-			rects = [self.tree.getRect(child) for child in self.tree.children(branch)]
+			rects = [self.tree.getRect(child) for child in self.tree.getChildren(branch)]
 
+			# pack from the bigger rectangles.
 			def f(r1, r2):
 				return r2.size() - r1.size()
 			for rect in sorted(rects, cmp=f):
@@ -466,7 +497,8 @@ class TreePacking:
 			r.x, r.y = packer.grid.center()
 			r.w, r.h = packer.grid.xCoord.width(), packer.grid.yCoord.width()
 
-		#TODO align
+		#TODO align the tree
+		#TODO shrink 0.5
 
 class Graph:
 	def __init__(self):
