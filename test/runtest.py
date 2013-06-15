@@ -8,6 +8,30 @@ class Template(unittest.TestCase):
 	def test_hoge(self):
 		pass
 
+class Coordinate(unittest.TestCase):
+	def setUp(self):
+		self.C = H.Coordinate(0, 3)
+		self.C.insert(2, 10)
+		self.C.insert(0, -5)
+	def test_basic(self):
+		self.assertEquals(self.C.size(), 4)
+		self.assertEquals(self.C.minLine(), -5)		
+		self.assertEquals(self.C.maxLine(), 10)		
+		self.assertEquals(self.C.width(), 15)		
+		self.assertEquals(self.C.indexOf(3), 2)
+	def test_LeftIntersection(self):
+		self.assertEquals(self.C.getLeftIntersection(2, 1.5), (1, 1))
+		self.assertEquals(self.C.getLeftIntersection(2, 0), (1, 1))
+		self.assertEquals(self.C.getLeftIntersection(2, -3), (0, 1))
+		self.assertEquals(self.C.getLeftIntersection(2, -5), (0, 1))
+		self.assertEquals(self.C.getLeftIntersection(2, -7), (-1, 1))
+	def test_RightIntersection(self):
+		self.assertEquals(self.C.getRightIntersection(1, 1.5), (1, 1))
+		self.assertEquals(self.C.getRightIntersection(1, 3), (1, 1))
+		self.assertEquals(self.C.getRightIntersection(1, 5), (1, 2))
+		self.assertEquals(self.C.getRightIntersection(1, 10), (1, 2))
+		self.assertEquals(self.C.getRightIntersection(1, 11), (1, 3))
+
 class BoolTable(unittest.TestCase):
 	def setUp(self):
 		self.m = H.BoolTable(1, 1)

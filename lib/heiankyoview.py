@@ -168,28 +168,30 @@ def binSearch(L, x):
 class Coordinate:
 	def __init__(self, minLine, maxLine):
 		self.L = [minLine, maxLine]
+	def insert(self, i, line):
+		self.L.insert(i, line)
 	def size(self):
-		return self.L.size()
+		return len(self.L)
 	def indexOf(self, line):
 		return binSearch(self.L, line)
 	def minLine(self):
 		return self.L[0]
 	def maxLine(self):
-		return self.L[self.L.size() - 1]
+		return self.L[len(self.L) - 1]
 	def width(self):
 		return self.maxLine() - self.minLine()
 
 	def getRightIntersection(self, i, line):
-		for j in xrange(j+1, self.size()):
+		for j in xrange(i+1, self.size()):
 			upper = self.L[j]
-			if line < upper:
-				return (i, j)
-		return (i, self.size())	
+			if line <= upper:
+				return (i, j-1)
+		return (i, self.size()-1)	
 
 	def getLeftIntersection(self, i, line):
 		for j in reversed(xrange(0, i)):
 			lower = self.L[j]
-			if line > lower:
+			if line >= lower:
 				return (j, i-1)
 		return (-1, i-1)
 
@@ -306,8 +308,8 @@ class PackingGrid:
 		return self.boolT.get(i, j)
 
 	def calcIntersectableRegion(self, x, y, position, w, h):
-		int I = self.xCoord.indexOf(x)
-		int J = self.yCoord.indexOf(y)
+		I = self.xCoord.indexOf(x)
+		J = self.yCoord.indexOf(y)
 
 		def ru():
 			_, a = self.xCoord.getRightIntersection(I, x + w)
