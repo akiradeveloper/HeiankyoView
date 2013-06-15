@@ -25,7 +25,6 @@ class Rectangle:
 		self.h = 0
 	def show(self):		
 		print(self.x, self.y, self.w, self.h)
-
 	def left(self):		
 		return x - 0.5 * w
 	def right(self):
@@ -34,7 +33,6 @@ class Rectangle:
 		return y + 0.5 * h
 	def bottom(self):
 		return y - 0.5 * h
-
 	def size(self):
 		return self.w * self.h
 
@@ -541,7 +539,7 @@ class TreePacking:
 		L = BFS(self.tree)
 		L = filter(lambda id: not self.tree.isLeaf(id), L)
 
-		#TODO set leafsize to 4*4
+		#TODO set leafsize to 8*8
 
 		for branch in reversed(L):
 			packer = RectanglePacking()
@@ -556,6 +554,8 @@ class TreePacking:
 			r = self.tree.getRect(branch)
 			r.x, r.y = packer.grid.center()
 			r.w, r.h = packer.grid.xCoord.width(), packer.grid.yCoord.width()
+
+			# offset to (0,0)
 
 		#TODO align the tree
 		#TODO shrink 0.5
@@ -575,6 +575,7 @@ class Graph:
 		if not self.root:
 			self.root = id
 		r = Rectangle()
+		#TODO HERE??? default size
 		self.nodes[id] = r
 
 	def getRect(self, id):

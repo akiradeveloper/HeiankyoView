@@ -8,6 +8,25 @@ class Template(unittest.TestCase):
 	def test_hoge(self):
 		pass
 
+class TreePacking(unittest.TestCase):
+	def setUp(self):
+		pass
+	def test_1(self):
+		g = H.Graph()
+		g.addNode(1)
+		g.addNode(2)
+		g.addNode(3)
+		g.addNode(4)
+
+		g.addChild(1,2)
+		g.addChild(1,3)
+		g.addChild(2,4)
+
+		self.g = g
+
+		tp = H.TreePacking(g)
+		tp.pack()
+
 def mk(w, h):
 	r = H.Rectangle()	
 	r.w = w
@@ -53,6 +72,12 @@ class RectanglePacking(unittest.TestCase):
 		r = [mk(3,3), mk(2,2), mk(1,1)]
 		padd(self.P, r)
 		ras(self, r[2], (2.5,-0.5)) 
+	def test_9(self):
+		r = [mk(5,5), mk(3,3), mk(1,1), mk(1,1), mk(1,1), mk(1,1), mk(1,1), mk(1,1), mk(1,1)]
+		padd(self.P, r)
+		for R in r:
+			pass
+			R.show()
 
 class Coordinate(unittest.TestCase):
 	def setUp(self):
