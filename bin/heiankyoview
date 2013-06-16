@@ -6,30 +6,7 @@ import heiankyoview as H
 
 if __name__ == '__main__':
 	fn = sys.argv[1]
-
-	f = open(fn)
-	T = f.readlines()
-	H.p(T)
-
-	E = []
-	for line in T:
-		src,dest = line.split(",")
-		E.append( (src.strip(), dest.strip()) )
-	H.p(E)
-
-	V = []
-	for src,dest in E:
-		V.append(src)
-		V.append(dest)
-	V = set(V)
-	H.p(V)
-
-	g = H.Graph()
-	for n in V:
-		g.addNode(n)
-	for e in E:
-		src,dest = e
-		g.addChild(src, dest)
+	g = H.EdgeList.read(fn)
 
 	tp = H.TreePacking(g)	
 	tp.pack()

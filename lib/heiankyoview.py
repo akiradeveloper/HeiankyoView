@@ -2,6 +2,34 @@ def p(msg):
 	pass
 	#print(msg)
 
+class EdgeList:
+	@classmethod
+	def read(cls, filename):
+		f = open(filename)
+		T = f.readlines()
+		p(T)
+
+		E = []
+		for line in T:
+			src,dest = line.split(",")
+			E.append( (src.strip(), dest.strip()) )
+		p(E)
+
+		V = []
+		for src,dest in E:
+			V.append(src)
+			V.append(dest)
+		V = set(V)
+		p(V)
+
+		g = Graph()
+		for n in V:
+			g.addNode(n)
+		for e in E:
+			src,dest = e
+			g.addChild(src, dest)
+		return g
+
 class CornerType:
 	OCCUPIED = 0
 	ADJACENT = 1
@@ -30,13 +58,13 @@ class Rectangle:
 	def show(self):		
 		p( (self.x, self.y, self.w, self.h) )
 	def left(self):		
-		return x - 0.5 * w
+		return self.x - 0.5 * self.w
 	def right(self):
-		return x + 0.5 * w 
+		return self.x + 0.5 * self.w 
 	def up(self):
-		return y + 0.5 * h
+		return self.y + 0.5 * self.h
 	def bottom(self):
-		return y - 0.5 * h
+		return self.y - 0.5 * self.h
 	def size(self):
 		return self.w * self.h
 	def expand(self, x):
