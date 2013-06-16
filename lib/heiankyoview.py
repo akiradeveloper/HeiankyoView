@@ -1,3 +1,7 @@
+def p(msg):
+	pass
+	#print(msg)
+
 class CornerType:
 	OCCUPIED = 0
 	ADJACENT = 1
@@ -15,7 +19,7 @@ class Candidate:
 		self.y = y
 		self.position = position
 	def show(self):
-		print( (self.x, self.y, self.position) )
+		p( (self.x, self.y, self.position) )
 
 class Rectangle:
 	def __init__(self):
@@ -24,7 +28,7 @@ class Rectangle:
 		self.w = 0
 		self.h = 0
 	def show(self):		
-		print(self.x, self.y, self.w, self.h)
+		p( (self.x, self.y, self.w, self.h) )
 	def left(self):		
 		return x - 0.5 * w
 	def right(self):
@@ -35,6 +39,12 @@ class Rectangle:
 		return y - 0.5 * h
 	def size(self):
 		return self.w * self.h
+	def expand(self, x):
+		self.w += x
+		self.h += x
+	def translate(self, v):
+		self.x += v[0]
+		self.y += v[1]
 
 class Table:
 	def __init__(self, N, M, value):
@@ -57,8 +67,8 @@ class Table:
 	def show(self):
 		for i in xrange(0, self.N):
 			for j in xrange(0, self.M):
-				print(i, j)
-				print(self.get(i, j))	
+				p(i, j)
+				p(self.get(i, j))	
 
 class BoolT:
 	def __init__(self, N, M):
@@ -81,17 +91,17 @@ class BoolT:
 		if self.n + addI > self.matrix.N:
 			self.doubleN()
 	def mvI(self, startI, addI):
-		# print(startI)
-		# print(addI)
-		# print(self.n)
+		# p(startI)
+		# p(addI)
+		# p(self.n)
 		for i in reversed( xrange(startI + addI, self.n) ):
 			self.copyI(i - addI, i)
-			#print(i)
+			#p(i)
 			#for j in xrange(0, self.m):
-				# print(self.matrix.get(i - addI, j))
+				# p(self.matrix.get(i - addI, j))
 				#self.matrix.set(i, j, self.matrix.get(i - addI, j))
-				# print(i, j)
-				# print(self.matrix.get(i, j))
+				# p(i, j)
+				# p(self.matrix.get(i, j))
 		for i in xrange(startI, startI + addI):
 			for j in xrange(0, self.m):
 				self.matrix.set(i, j, False)
@@ -112,8 +122,8 @@ class BoolT:
 		for j in reversed( xrange(startJ + addJ, self.m) ):
 				#self.matrix.set(i, j, self.matrix.get(i, j - addJ))
 			self.copyJ(j - addJ, j)
-				#print(i, j)
-				#print(self.matrix.get(i, j))
+				#p(i, j)
+				#p(self.matrix.get(i, j))
 		for i in xrange(0, self.n):
 			for j in xrange(startJ, startJ + addJ):
 				self.matrix.set(i, j, False)
@@ -143,15 +153,15 @@ class BoolTable:
 	def expandJ(self, startJ, addJ):
 		self.boolT.expandJ(self.adjustJ(startJ), addJ)
 	def show(self):
-		print("show table")
+		p("show table")
 		#self.boolT.matrix.show()
-		print(self.n())
-		print(self.m())
+		p(self.n())
+		p(self.m())
 		for i in xrange(0, self.n()):
 			for j in xrange(0, self.m()):
-				# print(j)
-				print(i, j)
-				print(self.get(i, j))	
+				# p(j)
+				p( (i, j) )
+				p(self.get(i, j))	
 	def copyI(self, src, dest):
 		self.boolT.copyI(self.adjustI(src), self.adjustI(dest))
 	def copyJ(self, src, dest):
@@ -212,7 +222,7 @@ class Coordinate:
 				return (j, i-1)
 		return (-1, i-1)
 	def show(self):
-		print(self.L)
+		p(self.L)
 
 class Placement:
 	def __init__(self, left, right, bottom, top):	
@@ -226,7 +236,7 @@ class Placement:
 	def y(self):
 		return self.bottom + 0.5 * (self.top - self.bottom) 
 	def show(self):
-		print( (self.left, self.right, self.bottom, self.top) )
+		p( (self.left, self.right, self.bottom, self.top) )
 
 class PackingGrid:
 	def __init__(self, left, right, bottom, top):
@@ -272,10 +282,10 @@ class PackingGrid:
 		return cornerType
 
 	def collectCandidates(self, iLeft, iRight, jBottom, jTop, position):
-		print("collect")
+		p("collect")
 		def OneSide(i, j, base, target):
 			if self.getCornerType(i, j, base, target) == CornerType.ADJACENT:
-				print(i, j)
+				p( (i, j) )
 				self.xCoord.show()
 				self.yCoord.show()
 				c = Candidate(
@@ -361,7 +371,7 @@ class PackingGrid:
 		I, J = m[position]
 
 		if not self.xCoord.has(newXLine):
-			print("new xline")
+			p("new xline")
 			mid = self.xCoord.minLine() < newXLine < self.xCoord.maxLine()
 			self.xCoord.insert(I, newXLine)
 			self.boolT.expandI(I, 1)
@@ -369,7 +379,7 @@ class PackingGrid:
 				self.boolT.copyI(I-1, I)
 
 		if not self.yCoord.has(newYLine):
-			print("new yline")
+			p("new yline")
 			mid = self.yCoord.minLine() < newYLine < self.yCoord.maxLine()
 			self.yCoord.insert(J, newYLine)
 			self.boolT.expandJ(J, 1)
@@ -377,8 +387,8 @@ class PackingGrid:
 				self.boolT.copyJ(J-1, J)
 
 		iLeft, iRight, jBottom, jTop = self.calcIntersectableRegion(x, y, position, w, h)
-		print("inter region")
-		print(iLeft, iRight, jBottom, jTop)
+		p("inter region")
+		p( (iLeft, iRight, jBottom, jTop) )
 		self.updateBoolT(iLeft, iRight, jBottom, jTop)
 		self.boolT.show()
 		self.collectCandidates(iLeft, iRight + 1, jBottom, jTop + 1, position)
@@ -430,7 +440,7 @@ class RectanglePacking:
 		bestEval = float("inf")
 
 		for i in reversed(xrange(0, len(self.grid.candidates))):
-			print("candidate")
+			p("candidate")
 			candidate = self.grid.candidates[i]
 			decisionIdx = i
 
@@ -454,13 +464,13 @@ class RectanglePacking:
 
 			currentsize = self.grid.xCoord.width() * self.grid.yCoord.width()
 			if (tryW * tryH) <= currentsize:
-				print("size not change! tryEval % f" % tryEval)
+				p("size not change! tryEval % f" % tryEval)
 				bestEval = tryEval
 				decision = candidate
 				break
 
 			if tryEval < bestEval:
-				print("size changed by candidate placed. tryEval %f" % tryEval)
+				p("size changed by candidate placed. tryEval %f" % tryEval)
 				bestEval = tryEval
 				decision = candidate
 
@@ -471,9 +481,9 @@ class RectanglePacking:
 				self.grid.yCoord.minLine())
 		tryW1, tryH1 = self.grid.tryPlacement(leftDownCorner[0], leftDownCorner[1], CornerPosition.RIGHT_DOWN, rect.w, rect.h)
 		tryEval1 = self.evaluatePlacement(tryW1, tryH1)
-		print("tryEval1 % f" % tryEval1)
+		p("tryEval1 % f" % tryEval1)
 		if tryEval1 < bestEval:
-			print("choose outside candidate 1")
+			p("choose outside candidate 1")
 			bestEval = tryEval1
 			decision = Candidate(leftDownCorner[0], leftDownCorner[1], CornerPosition.RIGHT_DOWN)
 			decisionOutside = True
@@ -483,9 +493,9 @@ class RectanglePacking:
 				self.grid.yCoord.maxLine())
 		tryW2, tryH2 = self.grid.tryPlacement(rightUpCorner[0], rightUpCorner[1], CornerPosition.RIGHT_DOWN, rect.w, rect.h)
 		tryEval2 = self.evaluatePlacement(tryW2, tryH2)
-		print("tryEval2 %f" % tryEval2)
+		p("tryEval2 %f" % tryEval2)
 		if tryEval2 < bestEval:
-			print("choose outside candidate 2")
+			p("choose outside candidate 2")
 			bestEval = tryEval2
 			decision = Candidate(rightUpCorner[0], rightUpCorner[1], CornerPosition.RIGHT_DOWN)
 			decisionOutside = True
@@ -498,7 +508,7 @@ class RectanglePacking:
 				rect.h)
 		# pm.show()
 			
-		print("place")
+		p("place")
 		self.grid.place(
 				decision.x,
 				decision.y,
@@ -537,28 +547,47 @@ class TreePacking:
 
 	def pack(self):
 		L = BFS(self.tree)
-		L = filter(lambda id: not self.tree.isLeaf(id), L)
+		branches = filter(lambda id: not self.tree.isLeaf(id), L)
+		leaves = filter(lambda id: self.tree.isLeaf(id), L)
+			
+		for leaf in leaves:		
+			r = self.tree.getRect(leaf)
+			r.w = 10
+			r.h = 10
 
-		#TODO set leafsize to 8*8
-
-		for branch in reversed(L):
+		for parent in reversed(branches):
 			packer = RectanglePacking()
-			rects = [self.tree.getRect(child) for child in self.tree.getChildren(branch)]
+			crects = [self.tree.getRect(child) for child in self.tree.getChildren(parent)]
 
 			# pack from the bigger rectangles.
 			def f(r1, r2):
 				return r2.size() - r1.size()
-			for rect in sorted(rects, cmp=f):
-				packer.add(rect)
+			for cr in sorted(crects, cmp=f):
+				packer.add(cr)
 
-			r = self.tree.getRect(branch)
-			r.x, r.y = packer.grid.center()
-			r.w, r.h = packer.grid.xCoord.width(), packer.grid.yCoord.width()
+			pr = self.tree.getRect(parent)
+			pr.x, pr.y = packer.grid.center()
+			pr.w, pr.h = packer.grid.xCoord.width(), packer.grid.yCoord.width()
 
-			# offset to (0,0)
+			pr.expand(2)
 
-		#TODO align the tree
-		#TODO shrink 0.5
+			for cr in crects:
+				cr.expand(-2)	
+				cr.translate( (-pr.x, -pr.y) )
+
+			pr.x = 0
+			pr.y = 0
+
+		for parent in branches:
+			pr = self.tree.getRect(parent)
+			crects = [self.tree.getRect(child) for child in self.tree.getChildren(parent)]
+			# pr.show()
+			for cr in crects:
+				# cr.show()
+				cr.translate( (pr.x, pr.y) )
+	
+		rr = self.tree.getRect( self.tree.getRoot() )
+		rr.expand(-2)
 
 class Graph:
 	def __init__(self):
@@ -575,7 +604,6 @@ class Graph:
 		if not self.root:
 			self.root = id
 		r = Rectangle()
-		#TODO HERE??? default size
 		self.nodes[id] = r
 
 	def getRect(self, id):

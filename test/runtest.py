@@ -11,7 +11,23 @@ class Template(unittest.TestCase):
 class TreePacking(unittest.TestCase):
 	def setUp(self):
 		pass
+		
 	def test_1(self):
+		print("test1")
+		g = H.Graph()
+		g.addNode(1); g.addNode(2)
+		g.addChild(1,2)
+
+		tp = H.TreePacking(g)
+		tp.pack()
+
+		L = H.BFS(g)
+		for n in L:
+			r = g.getRect(n)
+			r.show()
+
+	def test_2(self):
+		print("test2")
 		g = H.Graph()
 		g.addNode(1)
 		g.addNode(2)
@@ -26,6 +42,12 @@ class TreePacking(unittest.TestCase):
 
 		tp = H.TreePacking(g)
 		tp.pack()
+
+		print("test2 tree show")
+		L = H.BFS(g)
+		for n in L:
+			r = g.getRect(n)
+			r.show()
 
 def mk(w, h):
 	r = H.Rectangle()	

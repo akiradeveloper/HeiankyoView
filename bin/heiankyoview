@@ -1,34 +1,45 @@
 #!/usr/bin/env/ python
 
+import sys
+
 import heiankyoview as H
 
 if __name__ == '__main__':
+	fn = sys.argv[1]
+
 	f = open(fn)
+	T = f.readlines()
+	H.p(T)
 
 	E = []
+	for line in T:
+		src,dest = line.split(",")
+		E.append( (src.strip(), dest.strip()) )
+	H.p(E)
 
 	V = []
 	for src,dest in E:
 		V.append(src)
 		V.append(dest)
 	V = set(V)
+	H.p(V)
 
-	g = H.Graph
+	g = H.Graph()
 	for n in V:
 		g.addNode(n)
 	for e in E:
 		src,dest = e
 		g.addChild(src, dest)
 
-
-	tp = TreePacking(g)	
+	tp = H.TreePacking(g)	
 	tp.pack()
 
 	nodes = []
-	L = BFS(g)
+	L = H.BFS(g)
 	for n in L:
 		rect = g.getRect(n)
 		nodes.append( (n, rect.x, rect.y, rect.w, rect.h) )
 
-	output = "\n".join( ["%d %f %f %f %f" % t for t in nodes] )
+	H.p(nodes)
+	output = "\n".join( ["%s,%f,%f,%f,%f" % tup for tup in nodes] )
 	print(output)
