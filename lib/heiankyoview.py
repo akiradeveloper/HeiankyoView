@@ -186,7 +186,10 @@ class BoolTable:
 		p(self.n())
 		p(self.m())
 		for i in xrange(0, self.n()):
+			print(self.n())
+			print(self.m())
 			for j in xrange(0, self.m()):
+				#print("hoge")
 				# p(j)
 				p( (i, j) )
 				p(self.get(i, j))	
@@ -309,13 +312,14 @@ class PackingGrid:
 				cornerType = CornerType.FREE
 		return cornerType
 
+	#FIXME position is not used.
 	def collectCandidates(self, iLeft, iRight, jBottom, jTop, position):
 		p("collect")
 		def OneSide(i, j, base, target):
 			if self.getCornerType(i, j, base, target) == CornerType.ADJACENT:
 				p( (i, j) )
-				self.xCoord.show()
-				self.yCoord.show()
+				#self.xCoord.show()
+				#self.yCoord.show()
 				c = Candidate(
 						self.xCoord.get(i), 
 						self.yCoord.get(j),
@@ -418,7 +422,7 @@ class PackingGrid:
 		p("inter region")
 		p( (iLeft, iRight, jBottom, jTop) )
 		self.updateBoolT(iLeft, iRight, jBottom, jTop)
-		self.boolT.show()
+		#self.boolT.show()
 		self.collectCandidates(iLeft, iRight + 1, jBottom, jTop + 1, position)
 
 	def getPlacement(self, x, y, position, w, h):
@@ -477,8 +481,16 @@ class RectanglePacking:
 			Y = candidate.y
 			P = candidate.position
 
-			gridIdx = self.grid.getGridIndex(X, Y, P)
+			#FIXED X, Y are coordinate, not index
+			gridIdx = self.grid.getGridIndex(
+					self.grid.xCoord.indexOf(X), 
+					self.grid.yCoord.indexOf(Y), 
+					P)
 	
+			#p("gridIdx")
+			#self.grid.xCoord.show()
+			#self.grid.yCoord.show()
+			#p( (gridIdx[0], gridIdx[1]) )
 			if self.grid.isOccupied(gridIdx[0], gridIdx[1]):
 				self.grid.candidates.pop(i)
 				continue
@@ -488,10 +500,11 @@ class RectanglePacking:
 				continue
 
 			tryW, tryH = self.grid.tryPlacement(X, Y, P, rect.w, rect.h)
+			p( "tryW:%f tryH:%f" % (tryW, tryH) )
 			tryEval = self.evaluatePlacement(tryW, tryH)
 
 			currentsize = self.grid.xCoord.width() * self.grid.yCoord.width()
-			if (tryW * tryH) <= currentsize:
+			if (tryW * tryH) <= (currentsize + 1):
 				p("size not change! tryEval % f" % tryEval)
 				bestEval = tryEval
 				decision = candidate
@@ -502,6 +515,8 @@ class RectanglePacking:
 				bestEval = tryEval
 				decision = candidate
 
+		p("bestEval %f" % bestEval)
+		bestEval -= 1
 		decisionOutside = False
 
 		leftDownCorner = (
@@ -521,7 +536,11 @@ class RectanglePacking:
 				self.grid.yCoord.maxLine())
 		tryW2, tryH2 = self.grid.tryPlacement(rightUpCorner[0], rightUpCorner[1], CornerPosition.RIGHT_DOWN, rect.w, rect.h)
 		tryEval2 = self.evaluatePlacement(tryW2, tryH2)
+		
+		#import struct
 		p("tryEval2 %f" % tryEval2)
+		#p( struct.pack("f", bestEval) )
+		#p( struct.pack("f", tryEval2) )
 		if tryEval2 < bestEval:
 			p("choose outside candidate 2")
 			bestEval = tryEval2
@@ -619,9 +638,12 @@ class TreePacking:
 
 class Graph:
 	def __init__(self):
-		self.nodes = {}
-		self.children = {}
-		self.root = None
+		self.nodes = {} # ID -> rect
+		self.children = {} # ID -> [childID]
+		self.parent = {} # ID -> parentID
+
+	def size(self):
+		return len(self.nodes)
 
 	def isLeaf(self, id):
 		return not id in self.children
@@ -629,10 +651,9 @@ class Graph:
 	def addNode(self, id):
 		if id in self.nodes:
 			return
-		if not self.root:
-			self.root = id
 		r = Rectangle()
 		self.nodes[id] = r
+		self.parent[id] = None
 
 	def getRect(self, id):
 		if not id in self.nodes:
@@ -648,11 +669,16 @@ class Graph:
 		if not parent in self.children:
 			self.children[parent] = []
 		self.children[parent].append(child)
-		if child == self.root:
-			self.root = parent
+		self.parent[child] = parent
 
 	def getRoot(self):
-		return self.root
+		for k in self.nodes.keys():
+			anyID = k
+			break
+		root = anyID
+		while(self.parent[root]):
+			root = self.parent[root]
+		return root
 
 if __name__ ==  '__main__':
 	pass
