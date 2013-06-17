@@ -2,6 +2,9 @@ def p(msg):
 	pass
 	#print(msg)
 
+def half(n):
+	return n / 2
+
 class EdgeList:
 	@classmethod
 	def read(cls, filename):
@@ -58,13 +61,13 @@ class Rectangle:
 	def show(self):		
 		p( (self.x, self.y, self.w, self.h) )
 	def left(self):		
-		return self.x - 0.5 * self.w
+		return self.x - half(self.w)
 	def right(self):
-		return self.x + 0.5 * self.w 
+		return self.x + half(self.w)
 	def up(self):
-		return self.y + 0.5 * self.h
+		return self.y + half(self.h)
 	def bottom(self):
-		return self.y - 0.5 * self.h
+		return self.y - half(self.h)
 	def size(self):
 		return self.w * self.h
 	def expand(self, x):
@@ -263,9 +266,9 @@ class Placement:
 		self.top = top
 
 	def x(self):
-		return self.left + 0.5 * (self.right - self.left) 
+		return self.left + half(self.right - self.left) 
 	def y(self):
-		return self.bottom + 0.5 * (self.top - self.bottom) 
+		return self.bottom + half(self.top - self.bottom) 
 	def show(self):
 		p( (self.left, self.right, self.bottom, self.top) )
 
@@ -281,8 +284,8 @@ class PackingGrid:
 		return self.boolT.get(i, j)
 
 	def center(self):
-		x = self.xCoord.minLine() + 0.5 * self.xCoord.width()
-		y = self.yCoord.minLine() + 0.5 * self.yCoord.width()
+		x = self.xCoord.minLine() + half(self.xCoord.width())
+		y = self.yCoord.minLine() + half(self.yCoord.width())
 		return (x, y)
 
 	def updateBoolT(self, iGridMin, iGridMax, jGridMin, jGridMax):
@@ -572,8 +575,8 @@ class RectanglePacking:
 	def add(self, rect):
 		if not self.grid:
 			self.grid = PackingGrid(0, rect.w, 0, rect.h)
-			rect.x = 0.5 * rect.w
-			rect.y = 0.5 * rect.h
+			rect.x = half(rect.w)
+			rect.y = half(rect.h)
 			return
 		self.addAnother(rect)
 
