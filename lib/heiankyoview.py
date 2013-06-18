@@ -3,7 +3,7 @@ def p(msg):
 	#print(msg)
 
 def half(n):
-	#assert(n % 2 == 0)
+	assert(n % 2 == 0)
 	return n / 2
 
 def delElems(L, indices):
@@ -636,6 +636,8 @@ class TreePacking:
 			packer = RectanglePacking()
 			crects = [self.tree.getRect(child) for child in self.tree.getChildren(parent)]
 
+			#TODO If all the given rectangles have the same (w,h), then go shortcut.
+ 
 			# pack from the bigger rectangles.
 			def f(r1, r2):
 				return r2.size() - r1.size()

@@ -79,31 +79,31 @@ class RectanglePacking(unittest.TestCase):
 	def setUp(self):
 		self.P = H.RectanglePacking()	
 	def test_2(self):
-		r = [mk(3,3), mk(2,2)]
+		r = [mk(6,6), mk(4,4)]
 		padd(self.P, r)
-		ras(self, r[0], (1.5,1.5))
-		ras(self, r[1], (1,-1))
+		ras(self, r[0], (3,3))
+		ras(self, r[1], (2,-2))
 	def test_3_1(self):
 		print("test 3 1")
-		r = [mk(3,3), mk(2,2)]
+		r = [mk(6,6), mk(4,4)]
 		padd(self.P, r)
 		self.assertEquals(self.P.grid.xCoord.size(), 3)
 		self.assertEquals(self.P.grid.yCoord.size(), 3)
 		self.P.grid.xCoord.show()
 		self.P.grid.yCoord.show()
-		r2 = mk(2,1)
+		r2 = mk(4,2)
 		print("add r2")
 		self.P.add(r2)
 		self.P.grid.xCoord.show()
 		self.P.grid.yCoord.show()
 		r2.show()
-		ras(self, r2, (3,-0.5)) 
+		ras(self, r2, (6,-1)) 
 	def test_3_2(self):
-		r = [mk(3,3), mk(2,2), mk(1,1)]
+		r = [mk(6,6), mk(4,4), mk(2,2)]
 		padd(self.P, r)
-		ras(self, r[2], (2.5,-0.5)) 
+		ras(self, r[2], (5,-1)) 
 	def test_9(self):
-		r = [mk(5,5), mk(3,3), mk(1,1), mk(1,1), mk(1,1), mk(1,1), mk(1,1), mk(1,1), mk(1,1)]
+		r = [mk(10,10), mk(6,6), mk(2,2), mk(2,2), mk(2,2), mk(2,2), mk(2,2), mk(2,2), mk(2,2)]
 		padd(self.P, r)
 		for R in r:
 			pass
