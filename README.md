@@ -16,6 +16,7 @@ the algorithm is improved later by a prominent bachelor student,
 Akira Hayakawa of Kyoto university.
 
 ### It's time to visualize the Linux kernel source tree!  
+Linus Torvalds is the mayor of this city. Where do you live in this city?  
 ![Visualizing Linux kernel](images/linux.png "Visualizing Linux kernel")
  
 ## Example
