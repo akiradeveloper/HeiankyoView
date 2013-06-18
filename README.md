@@ -15,7 +15,7 @@ HeiankyoView is originally developed by Takayuki Itoh and
 the algorithm is improved later by a prominent bachelor student,
 Akira Hayakawa of Kyoto university.
 
-Let's visualize the Linux kernel source tree!  
+### It's time to visualize the Linux kernel source tree!  
 ![Visualizing Linux kernel](images/linux.png "Visualizing Linux kernel")
  
 ## Example
@@ -44,6 +44,10 @@ $ heiankyoview edgelist.sample
 2,0.000000,5.000000,10.000000,10.000000
 4,0.000000,5.000000,8.000000,8.000000
 ```
+
+## Installation and Testing
+Run `#make install` and HeiankyoView is simply ready.  
+For testing, run `$make runtest` and `$heiankyoview edgelist.sample` are provided.
 
 ## Developer Info
 Akira Hayakawa(@akiradeveloper)  
