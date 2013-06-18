@@ -8,6 +8,14 @@ class Template(unittest.TestCase):
 	def test_hoge(self):
 		pass
 
+class Util(unittest.TestCase):
+	def setUp(self):
+		pass
+	def test_delElems(self):
+		L = [3,5,2,9,1]
+		H.delElems(L, [1,3])
+		self.assertEquals(L, [3,2,1])
+
 class TreePacking(unittest.TestCase):
 	def setUp(self):
 		pass

@@ -3,7 +3,20 @@ def p(msg):
 	#print(msg)
 
 def half(n):
+	#assert(n % 2 == 0)
 	return n / 2
+
+def delElems(L, indices):
+	#print(indices)
+	DL = []
+	for i in xrange(0, len(indices)):
+		idx = indices[i]
+		DL.append( idx - i )
+	#print(DL)
+	for i in DL:
+		#print(L[i])
+		#print(i)
+		L.pop(i)
 
 class EdgeList:
 	@classmethod
@@ -189,8 +202,8 @@ class BoolTable:
 		p(self.n())
 		p(self.m())
 		for i in xrange(0, self.n()):
-			print(self.n())
-			print(self.m())
+			p(self.n())
+			p(self.m())
 			for j in xrange(0, self.m()):
 				#print("hoge")
 				# p(j)
@@ -474,10 +487,13 @@ class RectanglePacking:
 	def addAnother(self, rect):
 		bestEval = float("inf")
 
-		for i in reversed(xrange(0, len(self.grid.candidates))):
-			p("candidate")
+		p("clear delList")
+		N = len(self.grid.candidates)
+		decisionIdx = N
+		delList = []
+		for i in reversed(xrange(0, N)):
+			p("candidate %d" % i)
 			candidate = self.grid.candidates[i]
-			decisionIdx = i
 
 			candidate.show()
 			X = candidate.x
@@ -495,7 +511,9 @@ class RectanglePacking:
 			#self.grid.yCoord.show()
 			#p( (gridIdx[0], gridIdx[1]) )
 			if self.grid.isOccupied(gridIdx[0], gridIdx[1]):
-				self.grid.candidates.pop(i)
+				#self.grid.candidates.pop(i)
+				p("occupied %d" % i)
+				delList.append(i)
 				continue
 
 			if self.grid.intersects(X, Y, P, rect.w, rect.h):
@@ -511,12 +529,14 @@ class RectanglePacking:
 				p("size not change! tryEval % f" % tryEval)
 				bestEval = tryEval
 				decision = candidate
+				decisionIdx = i
 				break
 
 			if tryEval < bestEval:
 				p("size changed by candidate placed. tryEval %f" % tryEval)
 				bestEval = tryEval
 				decision = candidate
+				decisionIdx = i
 
 		p("bestEval %f" % bestEval)
 		bestEval -= 1
@@ -567,7 +587,14 @@ class RectanglePacking:
 				rect.h)
 
 		if not decisionOutside:
-			self.grid.candidates.pop(decisionIdx)
+			p("not outside")
+			#self.grid.candidates.pop(decisionIdx)
+			delList.append(decisionIdx)
+
+		#p(self.grid.candidates)
+		#p(delList)
+		#for id in delList:
+		delElems(self.grid.candidates, sorted(delList))
 
 		rect.x = pm.x()
 		rect.y = pm.y()
