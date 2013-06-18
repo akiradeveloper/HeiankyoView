@@ -14,6 +14,9 @@ map of Heian-kyo.
 HeiankyoView is originally developed by Takayuki Itoh and
 the algorithm is improved later by a prominent bachelor student,
 Akira Hayakawa of Kyoto university.
+
+Let's visualize the Linux kernel source tree!  
+![Visualizing Linux kernel](images/linux.png "Visualizing Linux kernel")
  
 ## Example
 heiankyoview command is a simple tool
