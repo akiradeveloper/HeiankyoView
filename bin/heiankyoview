@@ -5,6 +5,8 @@ import sys
 import heiankyoview as HV
 
 if __name__ == '__main__':
+	# TODO Use ArgumentParser
+
 	fn = sys.argv[1]
 	g = HV.EdgeList.read(fn)
 	#print(g.size())

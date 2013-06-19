@@ -636,7 +636,8 @@ class TreePacking:
 			packer = RectanglePacking()
 			crects = [self.tree.getRect(child) for child in self.tree.getChildren(parent)]
 
-			#TODO If all the given rectangles have the same (w,h), then go shortcut.
+			# TODO (Performance) 
+			# If all the given rectangles have the same (w,h), then go shortcut.
  
 			# pack from the bigger rectangles.
 			def f(r1, r2):
@@ -686,6 +687,13 @@ class Graph:
 		r = Rectangle()
 		self.nodes[id] = r
 		self.parent[id] = None
+
+	# TODO Seperate the structure and the attributes on nodes.
+	# Change to setAttr(self, id, attr) and getAttr(self, id)
+	def setAttr(self, id, attr):
+		pass
+	def getAttr(self, id):
+		pass
 
 	def getRect(self, id):
 		if not id in self.nodes:

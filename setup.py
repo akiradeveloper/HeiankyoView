@@ -11,4 +11,12 @@ setup(
 	scripts = [
 		'bin/heiankyoview',
 	],
+	platforms = ['POSIX'],
+	classifiers = [
+		"Operating System :: POSIX :: Linux",	
+		"Programming Language :: Python",
+		"Development Status :: 4 - Beta",
+		"Environment :: Console",
+		"Topic :: Scientific/Engineering :: Visualization",
+	]
 )
