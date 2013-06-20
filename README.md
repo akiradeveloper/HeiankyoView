@@ -50,8 +50,6 @@ $heiankyoview edgelist.sample
 Run `#make install` and HeiankyoView is simply ready.  
 For testing, run `$make runtest` and `$heiankyoview edgelist.sample` are provided.
 
-## Releases Notes
-
 ## Developer Info
 Akira Hayakawa(@akiradeveloper)  
 e-mail: ruby.wktk@gmail.com
