@@ -46,6 +46,14 @@ class EdgeList:
 			g.addChild(src, dest)
 		return g
 
+	@classmethod
+	def dump(cls, g):
+		L = []
+		for n in BFS(g):
+			for child in g.getChildren(n):	
+				L.append( (n, child) )
+		return "\n".join( [ "%s,%s" % (src, dest) for src, dest in L ] ) 
+
 class CornerType:
 	OCCUPIED = 0
 	ADJACENT = 1
