@@ -626,6 +626,8 @@ class TreePacking:
 		L = BFS(self.tree)
 		branches = filter(lambda id: not self.tree.isLeaf(id), L)
 		leaves = filter(lambda id: self.tree.isLeaf(id), L)
+
+		pad = 2
 			
 		for leaf in leaves:		
 			r = self.tree.getRect(leaf)
@@ -643,16 +645,17 @@ class TreePacking:
 			def f(r1, r2):
 				return r2.size() - r1.size()
 			for cr in sorted(crects, cmp=f):
+				cr.expand(pad)
 				packer.add(cr)
 
 			pr = self.tree.getRect(parent)
 			pr.x, pr.y = packer.grid.center()
 			pr.w, pr.h = packer.grid.xCoord.width(), packer.grid.yCoord.width()
 
-			pr.expand(2)
+			pr.expand(pad)
 
 			for cr in crects:
-				cr.expand(-2)	
+				cr.expand(-pad)	
 				cr.translate( (-pr.x, -pr.y) )
 
 			pr.x = 0
@@ -666,8 +669,8 @@ class TreePacking:
 				# cr.show()
 				cr.translate( (pr.x, pr.y) )
 	
-		rr = self.tree.getRect( self.tree.getRoot() )
-		rr.expand(-2)
+		#rr = self.tree.getRect( self.tree.getRoot() )
+		#rr.expand(-2)
 
 class Graph:
 	def __init__(self):
