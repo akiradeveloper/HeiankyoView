@@ -1,3 +1,5 @@
+import math
+
 def p(msg):
 	pass
 	#print(msg)
@@ -643,27 +645,62 @@ class TreePacking:
 			r.h = 10
 
 		for parent in reversed(branches):
+			#print(parent)
 			packer = RectanglePacking()
 			crects = [self.tree.getRect(child) for child in self.tree.getChildren(parent)]
 
-			# TODO (Performance) 
-			# If all the given rectangles have the same (w,h), then go shortcut.
- 
-			# pack from the bigger rectangles.
-			def f(r1, r2):
-				return r2.size() - r1.size()
-			for cr in sorted(crects, cmp=f):
-				cr.expand(pad)
-				packer.add(cr)
-
+			uniformsz = True	
+			#uniformsz = False
+			r = crects[0]
+			sz = (r.w, r.h)
+			for cr in crects:
+				if not sz == (cr.w, cr.h):
+					uniformsz = False
+					break
+			D = half(sz[0])
+			
 			pr = self.tree.getRect(parent)
-			pr.x, pr.y = packer.grid.center()
-			pr.w, pr.h = packer.grid.xCoord.width(), packer.grid.yCoord.width()
+			if uniformsz:
+				n = len(crects)
+				sq = math.sqrt(n)
+				M = int(math.ceil(sq))		
+				N = int(math.ceil(float(n)/M))
+				#print(N, M)
+				stride = 2 * D + pad
+				for i in xrange(0, N):
+					for j in xrange(0, M):
+						idx = i * M + j
+						if not idx < n:
+							break
+						cr = crects[idx]
+						cr.x = stride * i 
+						cr.y = - stride * j
+				left = - (D + pad)
+				right = stride * (N-1) + D + pad
+				bottom =  - (stride * (M-1) + D + pad)
+				top = D + pad
 
-			pr.expand(pad)
+				pr.x = half(left + right)
+				pr.y = half(bottom + top)
+				pr.w = right - left
+				pr.h = top - bottom
+			else:			
+				# pack from the bigger rectangles.
+				#print(len(crects))
+				def f(r1, r2):
+					return r2.size() - r1.size()
+				for cr in sorted(crects, cmp=f):
+					cr.expand(pad)
+					packer.add(cr)
+	
+				pr.x, pr.y = packer.grid.center()
+				pr.w, pr.h = packer.grid.xCoord.width(), packer.grid.yCoord.width()
+	
+				pr.expand(pad)
+				for cr in crects:
+					cr.expand(-pad)	
 
 			for cr in crects:
-				cr.expand(-pad)	
 				cr.translate( (-pr.x, -pr.y) )
 
 			pr.x = 0
