@@ -1,3 +1,4 @@
+import numpy
 import math
 
 def p(msg):
@@ -114,15 +115,29 @@ class Table:
 		self.matrix[i][j] = value
 	def get(self, i, j):
 		return self.matrix[i][j]
-	def backup(self, to):
-		for i in xrange(0, self.N):
-			for j in xrange(0, self.M):
-				to.set(i, j, self.get(i, j))
 	def show(self):
 		for i in xrange(0, self.N):
 			for j in xrange(0, self.M):
 				p(i, j)
 				p(self.get(i, j))	
+	def backup(self, to):
+		for i in xrange(0, self.N):
+			for j in xrange(0, self.M):
+				to.set(i, j, self.get(i, j))
+	def copyI(self, src, dest):
+		for j in xrange(0, self.M):
+			self.set(dest, j, self.get(src, j))
+	def copyJ(self, src, dest):
+		for i in xrange(0, self.N):
+			self.set(i, dest, self.get(i, src))
+	def fillIRange(self, begin, end, val):
+		for i in xrange(begin, end+1):
+			for j in xrange(0, self.M):
+				self.set(i, j, val)
+	def fillJRange(self, begin, end, val):	
+		for i in xrange(0, self.N):
+			for j in xrange(begin, end+1):
+				self.set(i, j, val)
 
 class BoolT:
 	def __init__(self, N, M):
@@ -131,11 +146,9 @@ class BoolT:
 		self.matrix = Table(N, M, False)
 
 	def copyI(self, src, dest):
-		for j in xrange(0, self.m):
-			self.matrix.set(dest, j, self.matrix.get(src, j))
+		self.matrix.copyI(src, dest)
 	def copyJ(self, src, dest):
-		for i in xrange(0, self.n):
-			self.matrix.set(i, dest, self.matrix.get(i, src))
+		self.matrix.copyJ(src, dest)
 
 	def doubleN(self):
 		m = Table(self.matrix.N * 2, self.matrix.M, False)
@@ -156,9 +169,11 @@ class BoolT:
 				#self.matrix.set(i, j, self.matrix.get(i - addI, j))
 				# p(i, j)
 				# p(self.matrix.get(i, j))
-		for i in xrange(startI, startI + addI):
-			for j in xrange(0, self.m):
-				self.matrix.set(i, j, False)
+
+		self.matrix.fillIRange(startI, startI + addI - 1, False)
+#		for i in xrange(startI, startI + addI):
+#			for j in xrange(0, self.m):
+#				self.matrix.set(i, j, False)
 	def expandI(self, startI, addI):
 		self.ensureI(addI)
 		self.n += addI
@@ -178,9 +193,10 @@ class BoolT:
 			self.copyJ(j - addJ, j)
 				#p(i, j)
 				#p(self.matrix.get(i, j))
-		for i in xrange(0, self.n):
-			for j in xrange(startJ, startJ + addJ):
-				self.matrix.set(i, j, False)
+		self.matrix.fillJRange(startJ, startJ + addJ - 1, False)
+#		for i in xrange(0, self.n):
+#			for j in xrange(startJ, startJ + addJ):
+#				self.matrix.set(i, j, False)
 	def expandJ(self, startJ, addJ):
 		self.ensureJ(addJ)
 		self.m += addJ
