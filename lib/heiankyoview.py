@@ -42,7 +42,7 @@ class EdgeList:
 
 		g = Graph()
 		for n in V:
-			g.addNode(n)
+			TreePacking.addNode(g, n)
 		for e in E:
 			src,dest = e
 			g.addChild(src, dest)
@@ -632,6 +632,11 @@ class TreePacking:
 	def __init__(self, tree):
 		self.tree = tree
 
+	@classmethod
+	def addNode(cls, g, id):
+		g.addNode(id)	
+		g.setAttr(id, Rectangle())
+
 	def pack(self):
 		L = BFS(self.tree)
 		branches = filter(lambda id: not self.tree.isLeaf(id), L)
@@ -732,16 +737,14 @@ class Graph:
 	def addNode(self, id):
 		if id in self.nodes:
 			return
-		r = Rectangle()
-		self.nodes[id] = r
+		self.nodes[id] = None	
 		self.parent[id] = None
 
-	# TODO Seperate the structure and the attributes on nodes.
-	# Change to setAttr(self, id, attr) and getAttr(self, id)
 	def setAttr(self, id, attr):
-		pass
+		self.nodes[id] = attr
+
 	def getAttr(self, id):
-		pass
+		return self.nodes[id]
 
 	def getRect(self, id):
 		if not id in self.nodes:

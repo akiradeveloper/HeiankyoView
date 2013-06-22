@@ -1,4 +1,4 @@
-import heiankyoview as H
+import heiankyoview as HV
 
 import unittest
 
@@ -13,7 +13,7 @@ class Util(unittest.TestCase):
 		pass
 	def test_delElems(self):
 		L = [3,5,2,9,1]
-		H.delElems(L, [1,3])
+		HV.delElems(L, [1,3])
 		self.assertEquals(L, [3,2,1])
 
 class TreePacking(unittest.TestCase):
@@ -22,25 +22,26 @@ class TreePacking(unittest.TestCase):
 		
 	def test_1(self):
 		print("test1")
-		g = H.Graph()
-		g.addNode(1); g.addNode(2)
+		g = HV.Graph()
+		HV.TreePacking.addNode(g, 1) 
+		HV.TreePacking.addNode(g, 2)
 		g.addChild(1,2)
 
-		tp = H.TreePacking(g)
+		tp = HV.TreePacking(g)
 		tp.pack()
 
-		L = H.BFS(g)
+		L = HV.BFS(g)
 		for n in L:
 			r = g.getRect(n)
 			r.show()
 
 	def test_2(self):
 		print("test2")
-		g = H.Graph()
-		g.addNode(1)
-		g.addNode(2)
-		g.addNode(3)
-		g.addNode(4)
+		g = HV.Graph()
+		HV.TreePacking.addNode(g, 1)
+		HV.TreePacking.addNode(g, 2)
+		HV.TreePacking.addNode(g, 3)
+		HV.TreePacking.addNode(g, 4)
 
 		g.addChild(1,2)
 		g.addChild(1,3)
@@ -48,17 +49,17 @@ class TreePacking(unittest.TestCase):
 
 		self.g = g
 
-		tp = H.TreePacking(g)
+		tp = HV.TreePacking(g)
 		tp.pack()
 
 		print("test2 tree show")
-		L = H.BFS(g)
+		L = HV.BFS(g)
 		for n in L:
 			r = g.getRect(n)
 			r.show()
 
 def mk(w, h):
-	r = H.Rectangle()	
+	r = HV.Rectangle()	
 	r.w = w
 	r.h = h
 	return r
@@ -77,7 +78,7 @@ def ras(T, r, xy):
 
 class RectanglePacking(unittest.TestCase):
 	def setUp(self):
-		self.P = H.RectanglePacking()	
+		self.P = HV.RectanglePacking()	
 	def test_2(self):
 		r = [mk(6,6), mk(4,4)]
 		padd(self.P, r)
@@ -111,7 +112,7 @@ class RectanglePacking(unittest.TestCase):
 
 class Coordinate(unittest.TestCase):
 	def setUp(self):
-		self.C = H.Coordinate(0, 3)
+		self.C = HV.Coordinate(0, 3)
 		self.C.insert(2, 10)
 		self.C.insert(0, -5)
 	def test_basic(self):
@@ -135,7 +136,7 @@ class Coordinate(unittest.TestCase):
 
 class BoolTable(unittest.TestCase):
 	def setUp(self):
-		self.m = H.BoolTable(1, 1)
+		self.m = HV.BoolTable(1, 1)
 	def test_basic(self):
 		self.assertFalse(self.m.get(0, -1))
 		self.assertFalse(self.m.get(1, 0))
@@ -180,15 +181,15 @@ class BinSearch(unittest.TestCase):
 		self.arr = [1,3,6,10]
 		pass
 	def test_binSearch(self):
-		self.assertEqual(H.binSearch(self.arr, 3), 1)
-		self.assertEqual(H.binSearch(self.arr, 11), -1)
-		self.assertEqual(H.binSearch(self.arr, 2), -1)
-		self.assertEqual(H.binSearch(self.arr, 1), 0) 
-		self.assertEqual(H.binSearch(self.arr, 0), -1) 
+		self.assertEqual(HV.binSearch(self.arr, 3), 1)
+		self.assertEqual(HV.binSearch(self.arr, 11), -1)
+		self.assertEqual(HV.binSearch(self.arr, 2), -1)
+		self.assertEqual(HV.binSearch(self.arr, 1), 0) 
+		self.assertEqual(HV.binSearch(self.arr, 0), -1) 
 
 class Graph(unittest.TestCase):
 	def setUp(self):
-		g = H.Graph()
+		g = HV.Graph()
 		g.addNode(1)
 		g.addNode(2)
 		g.addNode(3)
@@ -207,7 +208,7 @@ class Graph(unittest.TestCase):
 		self.assertEqual(self.g.isLeaf(4), True)
 
 	def test_BFS(self):
-		L = H.BFS(self.g)
+		L = HV.BFS(self.g)
 		self.assertEqual(L, [1,3,2,4])
 
 if __name__ == '__main__':

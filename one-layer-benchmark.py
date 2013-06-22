@@ -6,19 +6,19 @@ def create_tree(n):
 	g = HV.Graph()
 	id = 1
 	rootID = id
-	g.addNode(rootID)
+	HV.TreePacking.addNode(g, rootID)
 	
 	for _ in xrange(0, n):
 		id += 1
 		bid = id
-		g.addNode(bid)
+		HV.TreePacking.addNode(g, bid)
 		g.addChild(rootID, bid)
 		nr_min = 10
 		nr_max = 1000
 		m = random.randint(nr_min, nr_max)
 		for _ in xrange(0, m):
 			id += 1
-			g.addNode(id)
+			HV.TreePacking.addNode(g, id)
 			g.addChild(bid, id)
 	return g
 
