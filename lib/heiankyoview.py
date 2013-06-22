@@ -138,12 +138,19 @@ class Table:
 		for i in xrange(0, self.N):
 			for j in xrange(begin, end+1):
 				self.set(i, j, val)
+	def fillRange(self, ibegin, iend, jbegin, jend, val):
+		for i in xrange(ibegin, iend+1):
+			for j in xrange(jbegin, jend+1):
+				self.set(i, j, val)
 
 class BoolT:
 	def __init__(self, N, M):
 		self.n = N
 		self.m = M
 		self.matrix = Table(N, M, False)
+
+	def fillRange(self, ibegin, iend, jbegin, jend, val):
+		self.matrix.fillRange(ibegin, iend, jbegin, jend, val)
 
 	def copyI(self, src, dest):
 		self.matrix.copyI(src, dest)
@@ -209,6 +216,11 @@ class BoolTable:
 		return i + 1
 	def adjustJ(self, j):
 		return j + 1
+	def fillRange(self, ibegin, iend, jbegin, jend, val):
+		self.boolT.fillRange(
+				self.adjustI(ibegin), self.adjustI(iend),
+				self.adjustJ(jbegin), self.adjustJ(jend),
+				val)
 
 	def get(self, i, j):
 		return self.boolT.matrix.get(self.adjustI(i), self.adjustJ(j))
@@ -328,9 +340,10 @@ class PackingGrid:
 		return (x, y)
 
 	def updateBoolT(self, iGridMin, iGridMax, jGridMin, jGridMax):
-		for i in xrange(iGridMin, iGridMax + 1):
-			for j in xrange(jGridMin, jGridMax + 1):
-				self.boolT.set(i, j, True)
+		self.boolT.fillRange(iGridMin, iGridMax, jGridMin, jGridMax, True)
+#		for i in xrange(iGridMin, iGridMax + 1):
+#			for j in xrange(jGridMin, jGridMax + 1):
+#				self.boolT.set(i, j, True)
 
 	def getGridIndex(self, i, j, position):
 		m = { 
