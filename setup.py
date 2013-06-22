@@ -13,6 +13,7 @@ setup(
 		'bin/heiankyoview',
 	],
 	platforms = ['POSIX'],
+	keywords = ["visualization", "tree", "geometry", "research", "algorithm", "graph", "treemap"],
 	classifiers = [
 		"Operating System :: POSIX :: Linux",	
 		"License :: OSI Approved :: Apache Software License",
