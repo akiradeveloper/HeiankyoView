@@ -27,8 +27,7 @@ class TreePacking(unittest.TestCase):
 		HV.TreePacking.addNode(g, 2)
 		g.addChild(1,2)
 
-		tp = HV.TreePacking(g)
-		tp.pack()
+		HV.TreePacking.pack(g)
 
 		L = HV.BFS(g)
 		for n in L:
@@ -49,8 +48,7 @@ class TreePacking(unittest.TestCase):
 
 		self.g = g
 
-		tp = HV.TreePacking(g)
-		tp.pack()
+		HV.TreePacking.pack(g)
 
 		print("test2 tree show")
 		L = HV.BFS(g)

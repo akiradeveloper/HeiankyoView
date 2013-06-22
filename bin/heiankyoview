@@ -12,8 +12,7 @@ if __name__ == '__main__':
 	#print(g.size())
 	#print(HV.BFS(g))
 
-	tp = HV.TreePacking(g)	
-	tp.pack()
+	HV.TreePacking.pack(g)	
 
 	nodes = []
 	L = HV.BFS(g)

@@ -9,8 +9,7 @@ dwg = svgwrite.Drawing(size=('100%', '100%'), profile='tiny')
 g = HV.EdgeList.read(fn)
 L = HV.BFS(g)
 
-tp = HV.TreePacking(g)
-tp.pack()
+HV.TreePacking.pack(g)
 
 rr = g.getRect( g.getRoot() )
 mvx, mvy = 0.5 * rr.w - rr.x, (-0.5) * rr.h - rr.y

@@ -629,30 +629,29 @@ def BFS(tree):
 	return L2
 
 class TreePacking:
-	def __init__(self, tree):
-		self.tree = tree
 
 	@classmethod
 	def addNode(cls, g, id):
 		g.addNode(id)	
 		g.setAttr(id, Rectangle())
 
-	def pack(self):
-		L = BFS(self.tree)
-		branches = filter(lambda id: not self.tree.isLeaf(id), L)
-		leaves = filter(lambda id: self.tree.isLeaf(id), L)
+	@classmethod
+	def pack(cls, tree):
+		L = BFS(tree)
+		branches = filter(lambda id: not tree.isLeaf(id), L)
+		leaves = filter(lambda id: tree.isLeaf(id), L)
 
 		pad = 2
 			
 		for leaf in leaves:		
-			r = self.tree.getRect(leaf)
+			r = tree.getRect(leaf)
 			r.w = 10
 			r.h = 10
 
 		for parent in reversed(branches):
 			#print(parent)
 			packer = RectanglePacking()
-			crects = [self.tree.getRect(child) for child in self.tree.getChildren(parent)]
+			crects = [tree.getRect(child) for child in tree.getChildren(parent)]
 
 			uniformsz = True	
 			#uniformsz = False
@@ -664,7 +663,7 @@ class TreePacking:
 					break
 			D = half(sz[0])
 			
-			pr = self.tree.getRect(parent)
+			pr = tree.getRect(parent)
 			if uniformsz:
 				n = len(crects)
 				sq = math.sqrt(n)
@@ -712,8 +711,8 @@ class TreePacking:
 			pr.y = 0
 
 		for parent in branches:
-			pr = self.tree.getRect(parent)
-			crects = [self.tree.getRect(child) for child in self.tree.getChildren(parent)]
+			pr = tree.getRect(parent)
+			crects = [tree.getRect(child) for child in tree.getChildren(parent)]
 			# pr.show()
 			for cr in crects:
 				# cr.show()

@@ -32,9 +32,8 @@ for n in ns:
 	N = 1
 	for _ in xrange(0, N):
 		t = create_tree(n)
-		tp = HV.TreePacking(t)
 		start = time.time()
-		tp.pack()	
+		HV.TreePacking.pack(t)	
 		end = time.time()
 		T.append( end - start )	
 	ave = sum(T) / N	
