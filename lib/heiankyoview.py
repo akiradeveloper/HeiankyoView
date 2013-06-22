@@ -1,4 +1,4 @@
-import numpy
+import numpy as np
 import math
 
 def p(msg):
@@ -103,12 +103,13 @@ class Rectangle:
 
 class Table:
 	def __init__(self, N, M, value):
-		self.matrix = []
-		for i in xrange(0, N):
-			self.matrix.append([])
-			for j in xrange(0, M):
-				arr = self.matrix[i]
-				arr.append(value)
+#		self.matrix = []
+#		for i in xrange(0, N):
+#			self.matrix.append([])
+#			for j in xrange(0, M):
+#				arr = self.matrix[i]
+#				arr.append(value)
+		self.matrix = np.zeros((N, M), dtype=bool)		
 		self.N = N
 		self.M = M
 	def set(self, i, j, value):
@@ -121,27 +122,35 @@ class Table:
 				p(i, j)
 				p(self.get(i, j))	
 	def backup(self, to):
-		for i in xrange(0, self.N):
-			for j in xrange(0, self.M):
-				to.set(i, j, self.get(i, j))
+		n = self.N
+		m = self.M
+		to.matrix[0:n, 0:m] = self.matrix[0:n, 0:m]
+#		for i in xrange(0, self.N):
+#			for j in xrange(0, self.M):
+#				to.set(i, j, self.get(i, j))
 	def copyI(self, src, dest):
-		for j in xrange(0, self.M):
-			self.set(dest, j, self.get(src, j))
+		self.matrix[dest, 0:self.M] = self.matrix[src, 0:self.M]
+#		for j in xrange(0, self.M):
+#			self.set(dest, j, self.get(src, j))
 	def copyJ(self, src, dest):
-		for i in xrange(0, self.N):
-			self.set(i, dest, self.get(i, src))
+		self.matrix[0:self.N, dest] = self.matrix[0:self.N, src]
+#		for i in xrange(0, self.N):
+#			self.set(i, dest, self.get(i, src))
 	def fillIRange(self, begin, end, val):
-		for i in xrange(begin, end+1):
-			for j in xrange(0, self.M):
-				self.set(i, j, val)
+		self.matrix[begin:end+1, 0:self.M] = val
+#		for i in xrange(begin, end+1):
+#			for j in xrange(0, self.M):
+#				self.set(i, j, val)
 	def fillJRange(self, begin, end, val):	
-		for i in xrange(0, self.N):
-			for j in xrange(begin, end+1):
-				self.set(i, j, val)
+		self.matrix[0:self.N, begin:end+1] = val
+#		for i in xrange(0, self.N):
+#			for j in xrange(begin, end+1):
+#				self.set(i, j, val)
 	def fillRange(self, ibegin, iend, jbegin, jend, val):
-		for i in xrange(ibegin, iend+1):
-			for j in xrange(jbegin, jend+1):
-				self.set(i, j, val)
+		self.matrix[ibegin:iend+1, jbegin:jend+1] = val
+#		for i in xrange(ibegin, iend+1):
+#			for j in xrange(jbegin, jend+1):
+#				self.set(i, j, val)
 
 class BoolT:
 	def __init__(self, N, M):
