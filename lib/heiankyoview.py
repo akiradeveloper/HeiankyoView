@@ -505,32 +505,28 @@ class RectanglePacking:
 		bestEval -= 1
 		decisionOutside = False
 
-		leftDownCorner = (
-				self.grid.xCoord.minLine(),
-				self.grid.yCoord.minLine())
-		tryW1, tryH1 = self.grid.tryPlacement(leftDownCorner[0], leftDownCorner[1], CornerPosition.RIGHT_DOWN, rect.w, rect.h)
-		tryEval1 = self.evaluatePlacement(tryW1, tryH1)
-		p("tryEval1 % f" % tryEval1)
-		if tryEval1 < bestEval:
-			p("choose outside candidate 1")
-			bestEval = tryEval1
-			decision = Candidate(leftDownCorner[0], leftDownCorner[1], CornerPosition.RIGHT_DOWN)
-			decisionOutside = True
-
 		rightUpCorner = (
 				self.grid.xCoord.maxLine(),
 				self.grid.yCoord.maxLine())
-		tryW2, tryH2 = self.grid.tryPlacement(rightUpCorner[0], rightUpCorner[1], CornerPosition.RIGHT_DOWN, rect.w, rect.h)
+		tryW1, tryH1 = self.grid.tryPlacement(rightUpCorner[0], rightUpCorner[1], CornerPosition.RIGHT_DOWN, rect.w, rect.h)
+		tryEval1 = self.evaluatePlacement(tryW1, tryH1)
+		p("tryEval1 %f" % tryEval1)
+		if tryEval1 < bestEval:
+			p("choose outside candidate 1")
+			bestEval = tryEval1
+			decision = Candidate(rightUpCorner[0], rightUpCorner[1], CornerPosition.RIGHT_DOWN)
+			decisionOutside = True
+
+		leftDownCorner = (
+				self.grid.xCoord.minLine(),
+				self.grid.yCoord.minLine())
+		tryW2, tryH2 = self.grid.tryPlacement(leftDownCorner[0], leftDownCorner[1], CornerPosition.RIGHT_DOWN, rect.w, rect.h)
 		tryEval2 = self.evaluatePlacement(tryW2, tryH2)
-		
-		#import struct
-		p("tryEval2 %f" % tryEval2)
-		#p( struct.pack("f", bestEval) )
-		#p( struct.pack("f", tryEval2) )
+		p("tryEval2 % f" % tryEval2)
 		if tryEval2 < bestEval:
 			p("choose outside candidate 2")
 			bestEval = tryEval2
-			decision = Candidate(rightUpCorner[0], rightUpCorner[1], CornerPosition.RIGHT_DOWN)
+			decision = Candidate(leftDownCorner[0], leftDownCorner[1], CornerPosition.RIGHT_DOWN)
 			decisionOutside = True
 
 		pm = self.grid.getPlacement(
@@ -614,12 +610,13 @@ class TreePacking:
 			if uniformsz:
 				n = len(crects)
 				sq = math.sqrt(n)
-				M = int(math.ceil(sq))		
-				N = int(math.ceil(float(n)/M))
+				# N >= M
+				N = int(math.ceil(sq))		
+				M = int(math.ceil(float(n)/N))
 				stride = 2 * D + pad
-				for i in xrange(0, N):
-					for j in xrange(0, M):
-						idx = i * M + j
+				for j in xrange(0, M):
+					for i in xrange(0, N):
+						idx = j * N + i
 						if not idx < n:
 							break
 						cr = crects[idx]

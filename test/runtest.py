@@ -81,7 +81,7 @@ class RectanglePacking(unittest.TestCase):
 		r = [mk(6,6), mk(4,4)]
 		padd(self.P, r)
 		ras(self, r[0], (3,3))
-		ras(self, r[1], (2,-2))
+		ras(self, r[1], (8,4))
 	def test_3_1(self):
 		print("test 3 1")
 		r = [mk(6,6), mk(4,4)]
@@ -96,11 +96,11 @@ class RectanglePacking(unittest.TestCase):
 		self.P.grid.xCoord.show()
 		self.P.grid.yCoord.show()
 		r2.show()
-		ras(self, r2, (6,-1)) 
+		ras(self, r2, (8,1)) 
 	def test_3_2(self):
 		r = [mk(6,6), mk(4,4), mk(2,2)]
 		padd(self.P, r)
-		ras(self, r[2], (5,-1)) 
+		ras(self, r[2], (7,1)) 
 	def test_9(self):
 		r = [mk(10,10), mk(6,6), mk(2,2), mk(2,2), mk(2,2), mk(2,2), mk(2,2), mk(2,2), mk(2,2)]
 		padd(self.P, r)
