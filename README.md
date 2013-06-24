@@ -28,7 +28,7 @@ We shall save this to a file edgelist.sample.
 
 INPUT:  
 ```
-$cat edgelist.sample
+$cat edgelist-sample
 1,2
 1,3
 2,4
@@ -39,11 +39,11 @@ Each row describes (NodeID, xCoord, yCoord, width, height).
 
 OUTPUT:  
 ```
-$heiankyoview edgelist.sample
-1,0.000000,0.000000,12.000000,22.000000
-3,-1.000000,-6.000000,8.000000,8.000000
-2,0.000000,5.000000,10.000000,10.000000
-4,0.000000,5.000000,8.000000,8.000000
+$heiankyoview edgelist-sample
+1,0.000000,0.000000,30.000000,18.000000
+3,8.000000,2.000000,10.000000,10.000000
+2,-6.000000,0.000000,14.000000,14.000000
+4,-6.000000,0.000000,10.000000,10.000000
 ```
 
 ## Install and Test
