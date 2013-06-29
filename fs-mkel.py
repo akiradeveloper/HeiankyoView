@@ -27,9 +27,9 @@ for parent, dirs, files in os.walk(root):
 
 HV.p(m)
 
-L = []
-for n in HV.BFS(g):
-	for child in g.getChildren(n):	
-		L.append( (n, child) )
-
-print( "\n".join( [ "%s,%s" % (src, dest) for src, dest in L ] ) )
+print(HV.EdgeList.dump(g))
+#L = []
+#for n in HV.BFS(g):
+#	for child in g.getChildren(n):	
+#		L.append( (n, child) )
+#print( "\n".join( [ "%s,%s" % (src, dest) for src, dest in L ] ) )

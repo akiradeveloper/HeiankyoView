@@ -1,4 +1,5 @@
 install:
+	python2.6 setup.py install
 	python setup.py install
 
 runtest:
