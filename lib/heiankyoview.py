@@ -553,6 +553,10 @@ class RectanglePacking:
 		rect.y = pm.y()
 
 	def add(self, rect):
+		"""
+		Add a rectangle to the packing grid.
+		The position of the rectangle will be calculated.
+		"""
 		if not self.grid:
 			self.grid = PackingGrid(0, rect.w, 0, rect.h)
 			rect.x = half(rect.w)
@@ -575,11 +579,18 @@ class TreePacking:
 
 	@classmethod
 	def addNode(cls, g, id):
+		"""
+		Add a node to a graph.
+		Use this function when the graph is a tree to be packed afterward.
+		"""
 		g.addNode(id)	
 		g.setAttr(id, Rectangle())
 
 	@classmethod
 	def pack(cls, tree):
+		"""
+		Calculate the size and position of the nodes.
+		"""
 		L = BFS(tree)
 		branches = filter(lambda id: not tree.isLeaf(id), L)
 		leaves = filter(lambda id: tree.isLeaf(id), L)

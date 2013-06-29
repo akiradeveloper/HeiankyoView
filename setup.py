@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
 	name = 'HeiankyoView',
-	version = '0.9',
+	version = '1.0',
 	url = 'https://github.com/akiradeveloper/HeiankyoView',
 	description = 'A fast algorithm to visualize tree structures',
 	author = 'Akira Hayakawa',
